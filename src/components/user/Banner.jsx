@@ -1,6 +1,19 @@
-import image from '../../public/happy-family-unloading-luggage-from-the-car-for-royalty-free-image-1656517251.jpg';
+import image from '../../../public/happy-family-unloading-luggage-from-the-car-for-royalty-free-image-1656517251.jpg';
+import {useState} from 'react'
 
 const Banner = () => {
+
+  const [startDate,setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+
+  const handleStartDateChange = (e)=>{
+    setStartDate(e.target.value)
+  }
+
+  const handleEndDateChange=(e)=>{
+    setEndDate(e.target.value)
+  }
+  
     return (
         <div className="h-96 md:flex" style={{ backgroundImage: `url(${image})`,
         backgroundSize: 'cover',
@@ -29,12 +42,10 @@ business ethics.</p>
             <div>
              
               <div className="mt-6">
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
+              <input
+            type="date"
+            value={startDate}
+            onChange={handleStartDateChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -45,12 +56,10 @@ business ethics.</p>
                
               </div>
               <div className="mb-8">
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  autoComplete="current-password"
-                  required
+              <input
+            type="date"
+            value={endDate}
+            onChange={handleEndDateChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -71,7 +80,7 @@ business ethics.</p>
             </div>
             
             
-        </div>
+         </div>
     )
 }
 

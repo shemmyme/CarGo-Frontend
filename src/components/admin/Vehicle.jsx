@@ -1,92 +1,112 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BACKEND_BASE_URL } from '../../utils/Config';
+import axios from 'axios';
+import { useCarsContext } from '../context/CarsContext';
+
 const Vehicle = () => {
-    return (
-      <section className="container px-4 mx-auto mt-10">
-        <div className="flex items-center gap-x-3">
-          <h2 className="text-lg font-medium text-gray-800 dark:text-white">
-            Total Vehicles
-          </h2>
-  
-          <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-            100 Vehicles
-          </span>
-        </div>
-  
-        <div className="flex flex-col mt-6">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-              <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-800">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                      >
-                        <div className="flex items-center gap-x-3">
-                          <span>Name</span>
-                        </div>
-                      </th>
-  
-                      <th
-                        scope="col"
-                        className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                      >
-                        <button className="flex items-center gap-x-2">
-                          <span>Status</span>
-                        </button>
-                      </th>
-  
-                      <th
-                        scope="col"
-                        className="p-3  text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                      >
-                        Image
-                      </th>
-                      <th
-                        scope="col"
-                        className="p-3 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                      >
-                        Price
-                      </th>
-                      <th
-                        scope="col"
-                        className="p-3 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                      >
-                        Description
-                      </th>
-                      <th
-                        scope="col"
-                        className="ptext-sm pr-20 font-normal text-right text-gray-500 dark:text-gray-400"
-                      >
-                        Edit
-                      </th>
-                      
-                    </tr>
-                  </thead>
-  
-                  <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800">
-                    {/* Mapping through team members */}
-                    {/* Replace this part with your dynamic data */}
-                    <tr>
+  const navigate = useNavigate();
+  const {cars, deleteCar} = useCarsContext()
+
+  const handleRemoveCar = async (carId) => {
+    try {
+      await deleteCar(carId);
+    } catch (error) {
+      console.error('Error deleting car:', error);
+    }
+  };
+
+  return (
+    <section className="container px-4 mx-auto mt-10">
+      <div className="flex items-center gap-x-3">
+        <h2 className="text-lg font-medium text-gray-800 dark:text-white">
+          Total Cars
+        </h2>
+        <span className="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
+          {cars.length} Cars
+        </span>
+      </div>
+      <div className="pt-2">
+        <button
+          onClick={() => navigate('/admin/addcars')}
+          className="px-3 py-2 text-xs text-blue-600 bg-yellow-100 dark:bg-gray-800 opacity-80"
+        >
+          Add Car
+        </button>
+      </div>
+
+      <div className="flex flex-col mt-4">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+            <div className="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead className="bg-gray-50 dark:bg-gray-800">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                    >
+                      Product Name
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                    >
+                      Status
+                    </th>
+                    <th
+                      scope="col"
+                      className="p-3 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                    >
+                      Image
+                    </th>
+                    <th
+                      scope="col"
+                      className="p-3 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                    >
+                      Price
+                    </th>
+                    <th
+                      scope="col"
+                      className="p-3 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                    >
+                      Description
+                    </th>
+                    <th
+                      scope="col"
+                      className="ptext-sm pr-20 font-normal text-right text-gray-500 dark:text-gray-400"
+                    >
+                      Edit
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800">
+                  {cars.map((car) => (
+                    <tr key={car.id}>
                       <td className="py-3 px-4 text-sm font-medium text-gray-800 dark:text-white">
-                        John Doe
+                        {car.product_name}
                       </td>
-                      <td className="px-12 text-sm font-medium text-green-600">
+                      <td className="px-12 py-3.5 text-sm font-medium text-green-600">
                         Active
                       </td>
-                      <td className=" p-3 text-sm text-gray-800 dark:text-gray-400">
-                        <img className="w-40 h-32 rounded-lg" src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y2Fyc3xlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80" alt="" />
+                      <td className="p-3 text-sm text-gray-800 dark:text-gray-400">
+                        <img
+                          className="w-40 h-32 rounded-lg"
+                          src={car.image_1} 
+                          alt={car.product_name}
+                        />
                       </td>
                       <td className="p-3 text-sm text-gray-800 dark:text-gray-400">
-                        3000
+                        {car.rent_amount}
                       </td>
                       <td className="p-3  w-96 text-sm text-gray-800 dark:text-gray-400">
-                      A car, or an automobile, is a motor vehicle with wheels. Most definitions of cars say that they run primarily on roads, seat one to eight people, have four wheels, and mainly transport people, not cargo.
+                        {car.description}
                       </td>
-                      
                       <td className=" text-sm whitespace-nowrap  h-20 w-20">
                         <div className="flex items-center gap-x-6">
-                          <button className=" text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
+
+                          <button onClick={()=> handleRemoveCar (car.id)} className=" text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
@@ -122,7 +142,7 @@ const Vehicle = () => {
                         </div>
                       </td>
                     </tr>
-                    {/* More team members */}
+                    ))}
                   </tbody>
                 </table>
               </div>

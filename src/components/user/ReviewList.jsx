@@ -27,10 +27,10 @@ const ReviewCard = ({ car, review, rating }) => {
 
 const ReviewList = () => {
   const dummyReviews = [
-    { car: "Car A", review: "Great car, loved the features!", rating: 4 },
-    { car: "Car B", review: "Comfortable and stylish.", rating: 5 },
-    { car: "Car C", review: "Powerful engine and smooth ride.", rating: 4 },
-    { car: "Car D", review: "Best Offroad and gearing.", rating: 4.5 },
+    { car: "Suzuki Frox", review: "Great car, loved the features!", rating: 4 },
+    { car: "Vittara Brezza", review: "Comfortable and stylish.", rating: 5 },
+    { car: "Toyota Fortuner", review: "Powerful engine and smooth ride.", rating: 4 },
+    { car: "Mahindra Thar", review: "Best Offroad and gearing.", rating: 4.5 },
     // Add more dummy reviews
   ];
 

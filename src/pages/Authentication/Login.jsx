@@ -5,6 +5,7 @@ import login from "../../helpers/Auth";
 import { getLocal } from "../../helpers/Auth";
 import { BACKEND_BASE_URL } from "../../utils/Config";
 import jwtDecode from "jwt-decode";
+import { toast, Toaster } from "react-hot-toast";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -20,24 +21,16 @@ function LoginPage() {
 
   const loginSubmit = async (e) => {
     e.preventDefault();
-
     const loginResponse = await login(e);
-    console.log(localResponse,'localresponse');
-
-    console.log(loginResponse, 'login response');
-
-
-
 
     if (loginResponse) {
-      // If the login is successful, redirect to the home page
+      toast.success('Logged in successfully');
       navigate('/');
-      toast.success('Logged in succesfully')
-
+    } else {
+      toast.error('Credentials are wrong or user is not registered.');
     }
   };
   
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
@@ -98,6 +91,7 @@ function LoginPage() {
           </div>
         </form>
       </div>
+      <Toaster position="top-center" reverseOrder={false}></Toaster>
     </div>
   );
 }

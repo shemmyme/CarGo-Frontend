@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
-import { toast, Toaster } from 'react-hot-toast'
+import { toast, Toaster } from 'react-hot-toast';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import { BACKEND_BASE_URL } from "../../utils/Config";
@@ -18,60 +18,44 @@ function SignupPage() {
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-  const data = {
-    email,
-    username,
-    password,
-  }
 
   const signupSubmit = async (e) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+
+    const data = {
+      email,
+      username,
+      password,
+    };
+
     try {
-      if (password == confirmPassword) {
-
-        try {
-          const response = await axios.post(BACKEND_BASE_URL + '/api/signup/', data);
-          console.log(response);
-          if (response.status) {
-            toast.success('Registration successful! Check your email to activate your account', { duration: 5000 });
-           
-  
-          }
-          else {
-            toast.error('Something went wrong');
-          }
-        } catch (error) {
-  
-          console.error(error);
-        }
-  
+      const response = await axios.post(BACKEND_BASE_URL + '/api/signup/', data);
+      if (response.status === 200) {
+        toast.success('Registration successful! Check your email to activate your account');
+        setTimeout(()=>{
+          history("/login");
+        },2000)
+      } else {
+        toast.error('Something went wrong');
       }
-      else {
-        Swal.fire('oops', 'password mismatch', 'error')
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        toast.error('Email already exists');
+      } else {
+        toast.error('An error occurred');
       }
-      
-
-      // if (response.status === 201) {
-        
-      //   history("/login");
-      // } else if (response.status === 400) {
-       
-      //   toast.error("Enter valid details");
-      // } else {
-
-      //   toast.error("An error occurred");
-      // }
-    } 
-    catch (error) {
-   
-      toast.error("An error occurred");
     }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
-      <Toaster position="top-center" reverseOrder={false}></Toaster>
+        <Toaster position="top-center" reverseOrder={false}></Toaster>
         <h1 className="text-3xl font-semibold text-center mb-4 text-blue-500">
           Sign Up
         </h1>
@@ -85,7 +69,9 @@ function SignupPage() {
               type="text"
               name="username"
               placeholder="Username"
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </div>
           <div className="mb-4">
@@ -94,7 +80,9 @@ function SignupPage() {
               type="email"
               name="email"
               placeholder="Email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className="mb-4">
@@ -103,7 +91,9 @@ function SignupPage() {
               type="password"
               name="password"
               placeholder="Password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </div>
           <div className="relative mb-4">
@@ -114,8 +104,8 @@ function SignupPage() {
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              required
             />
-
             <div className="absolute top-1/2 right-4 transform -translate-y-1/2">
               {passwordVisible ? (
                 <AiOutlineEyeInvisible

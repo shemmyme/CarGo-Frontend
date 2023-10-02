@@ -1,0 +1,31 @@
+/* Stylish Toast Message */
+.toast-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #3ec1c8; /* Background color */
+    color: #fff; /* Text color */
+    padding: 20px; /* Padding */
+    border-radius: 10px; /* Rounded corners */
+    font-size: 22px; /* Font size */
+    text-align: center; /* Center text */
+    box-shadow: 0px 0px 20px rgba(48, 103, 129, 0.4); /* Box shadow */
+    z-index: 1000; /* Ensure it's on top of other content */
+    opacity: 80; /* Initially hidden */
+    transition: opacity 0.3s ease-in-out;
+    max-width: 800px; /* Set a maximum width to limit the message size */
+    overflow: hidden; /* Hide overflowing content */
+    white-space: nowrap; /* Prevent text from wrapping */
+    text-overflow: ellipsis; /* Display ellipsis for long text */
+  }
+  
+  /* Stylish Toast Message on Hover */
+  .toast-message:hover {
+    background-color: #555; /* Darker background on hover */
+    cursor: pointer;
+    box-shadow: 0px 0px 30px rgba(188, 66, 155, 0.6); /* Increased shadow on hover */
+    opacity: 1; /* Show the message on hover */
+    transition: opacity 0.3s ease-in-out;
+  }
+  

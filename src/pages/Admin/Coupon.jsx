@@ -3,7 +3,7 @@ import Navbar from '../../components/admin/Navbar'
 const ManageCoupon   = () => {
     return(
     <>
-        <Navbar/>
+    <Navbar/>
     <Coupon/>
     </>
     )

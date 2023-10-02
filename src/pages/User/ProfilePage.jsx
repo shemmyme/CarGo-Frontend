@@ -1,15 +1,21 @@
-import Profilebar from "../../components/Profilebar";
-import Profilebox from "../../components/Profilebox";
+import Navbar from "../../components/user/Navbar";
+import LiveCam from "../../components/user/LiveCam";
+import Profilebar from "../../components/user/Profilebar";
+import Profilebox from "../../components/user/Profilebox";
 
-export function ProfilePage(){
-    return(
-        <div className="overflow-x-hidden md:flex" >
-            <div className="hidden lg:block">
-            <Profilebar/>
-            </div>
-            <Profilebox/>
+export function ProfilePage() {
+  return (
+    <div>
+      <div className="overflow-x-hidden md:flex">
+        {/* <Navbar/> */}
+        <div className="hidden lg:block">
+          <Profilebar />
         </div>
-    )
+        <Profilebox />
+      </div>
+
+    </div>
+  );
 }
 
 export default ProfilePage;

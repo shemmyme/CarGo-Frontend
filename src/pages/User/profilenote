@@ -1,0 +1,47 @@
+
+
+
+import React, { useState, useEffect } from 'react';
+import { Avatar, Typography, Button } from "@material-tailwind/react";
+import {
+  MapPinIcon,
+  BriefcaseIcon,
+  BuildingLibraryIcon,
+} from "@heroicons/react/24/solid";
+import Navbar from "../components/Navbar";
+import axios from 'axios';
+import axiosInstance from "../api/apiconfig";
+import ProfileUpdateMdl from './ProfileModal';
+import { BookingCard } from './userbookinglist';
+import { DealerBookingCard } from './dealerbookinglist';
+
+
+export function Profile() {
+
+  const [modal, setModal] = useState(false);
+  const [profile, setProfile] = useState(null);
+  
+  const user_id = localStorage.getItem('id');
+  const [userData, setUserdata] = useState([]);
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+  
+
+  const fetchUserData = async () => {
+    try {
+      const response = await axiosInstance.get(`/userapp/user/${user_id}/`);
+      setUserdata(response.data);
+      console.log(response.data, "ppppppppppppppppppppppppppppppppppppp");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+    
+  
+  return (
+    <div>
+
+    </div>
+  )

@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { toast } from "react-hot-toast";
+
 export default async function login(e) {
   let response = await fetch("http://localhost:8000/api/login/", {
     method: "POST",
@@ -12,14 +14,17 @@ export default async function login(e) {
   });
 
   let data = await response.json();
-  console.log("data", data);
+  console.log("data from auth", data);
 
   if (response.status === 200) {
-    localStorage.setItem("authToken", JSON.stringify(data));
+    // Store the token and user ID in localStorage
+    localStorage.setItem("authToken", data.refresh);
+    localStorage.setItem("userId", data.id);
+    
     toast.success("Login Success");
     return data;
-  } else {
-    toast.error("Invalid User Credential");
+  } else {  
+    // Handle login failure here, e.g., show an error message
   }
 }
 
