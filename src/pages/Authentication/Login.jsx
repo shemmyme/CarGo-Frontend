@@ -3,8 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import login from "../../helpers/Auth";
 import { getLocal } from "../../helpers/Auth";
-import { BACKEND_BASE_URL } from "../../utils/Config";
-import jwtDecode from "jwt-decode";
 import { toast, Toaster } from "react-hot-toast";
 
 function LoginPage() {

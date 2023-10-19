@@ -1,10 +1,14 @@
+import { useNavigate } from 'react-router-dom';
 import image from '../../../public/happy-family-unloading-luggage-from-the-car-for-royalty-free-image-1656517251.jpg';
 import {useState} from 'react'
 
 const Banner = () => {
 
+  const navigate = useNavigate()
   const [startDate,setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const currentDate = new Date().toISOString().split('T')[0];
+
 
   const handleStartDateChange = (e)=>{
     setStartDate(e.target.value)
@@ -13,6 +17,11 @@ const Banner = () => {
   const handleEndDateChange=(e)=>{
     setEndDate(e.target.value)
   }
+
+  const handleGo = () => {
+    console.log('clicked');
+    navigate(`/cars?start_date=${startDate}&end_date=${endDate}`);
+  };
   
     return (
         <div className="h-96 md:flex" style={{ backgroundImage: `url(${image})`,
@@ -45,6 +54,7 @@ business ethics.</p>
               <input
             type="date"
             value={startDate}
+            min = {currentDate}
             onChange={handleStartDateChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -59,6 +69,7 @@ business ethics.</p>
               <input
             type="date"
             value={endDate}
+            min={startDate}
             onChange={handleEndDateChange}
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -67,7 +78,8 @@ business ethics.</p>
 
             <div>
               <button
-                type="submit"
+                onClick={handleGo}
+                type="button"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 GOO...

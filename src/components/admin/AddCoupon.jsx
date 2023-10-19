@@ -3,45 +3,46 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_BASE_URL } from "../../utils/Config";
 
-function AddCars() {
-  const initialProduct = {
+function AddCoupons() {
+  const initialCoupon = {
     coupon_code: "",
-    discount_perc: "",
-    description: "",
-    start_date: "",
     end_date: "",
+    discount_perc: "",
+    start_date: "",
+    description: "",
     image_1: [],
-    max_uses: [],
+    max_use : '',
+    uses_remaining:''
   };
 
-  const [product, setProduct] = useState(initialProduct);
+  const [coupon, setCoupon] = useState(initialCoupon);
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
-      for (const key in product) {
-        if (Array.isArray(product[key])) {
-          for (const image of product[key]) {
+      for (const key in coupon) {
+        if (Array.isArray(coupon[key])) {
+          for (const image of coupon[key]) {
             formData.append(key, image);
           }
           console.log(formData, "formdata");
         } else {
-          formData.append(key, product[key]);
+          formData.append(key, coupon[key]);
         }
       }
 
       const response = await axios.post(
-        BACKEND_BASE_URL + "/admin/addcar/",
+        BACKEND_BASE_URL + "/admin/addcoupon/",
         formData
       );
 
       if (response.status === 201) {
-        alert("Car added successfully!");
-        navigate("/admin/listcar/");
-        setProduct(initialProduct);
+        alert("Coupon added successfully!");
+        navigate("/admin/coupon/");
+        setCoupon(initialCoupon);
       } else {
-        alert("Failed to add car.");
+        alert("Failed to add coupon.");
       }
     } catch (error) {
       console.log(error, "errrrrrrrrrrrrrrrrrrrrrrrrorrrrrrrrrrrrrr");
@@ -53,51 +54,69 @@ function AddCars() {
       <form>
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">
-            Cars Listing
+            Coupon Listing
           </h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">
-            Add the cars you wish to list in the user's side
+            Add the coupons you wish to make applicable users
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-3">
               <label
-                htmlFor="product_name"
+                htmlFor="coupon_code"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Product Name
+                Coupon Name
               </label>
               <div className="mt-2">
                 <input
-                  name="product_name"
+                  name="coupon_code"
                   onChange={(e) =>
-                    setProduct({ ...product, [e.target.name]: e.target.value })
+                    setCoupon({ ...coupon, [e.target.name]: e.target.value })
                   }
                   type="text"
-                  id="product_name"
+                  id="coupon_code"
                   className="form-control"
-                  value={product.product_name}
+                  value={coupon.coupon_code}
+                />
+              </div>
+              <label
+                htmlFor="uses_remaining"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Uses Remaining
+              </label>
+              <div className="mt-2">
+                <input
+                  name="uses_remaining"
+                  onChange={(e) =>
+                    setCoupon({ ...coupon, [e.target.name]: e.target.value })
+                  }
+                  type="text"
+                  id="uses_remaining"
+                  className="form-control"
+                  value={coupon.uses_remaining}
                 />
               </div>
             </div>
 
             <div className="sm:col-span-3">
               <label
-                htmlFor="model"
+                htmlFor="discount_perc"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Model
+                Discount Percentage 
               </label>
               <div className="mt-2">
                 <input
-                  name="model"
+                  name="discount_perc"
                   onChange={(e) =>
-                    setProduct({ ...product, [e.target.name]: e.target.value })
+                    setCoupon({ ...coupon, [e.target.name]: e.target.value })
                   }
                   type="text"
-                  id="model"
+                  id="discount_perc"
                   className="form-control"
-                  value={product.model}
+                  value={coupon.discount_perc}
                 />
               </div>
             </div>
@@ -113,63 +132,81 @@ function AddCars() {
                 <input
                   name="description"
                   onChange={(e) =>
-                    setProduct({ ...product, [e.target.name]: e.target.value })
+                    setCoupon({ ...coupon, [e.target.name]: e.target.value })
                   }
                   id="description"
                   rows="3"
-                  value={product.description}
+                  value={coupon.description}
                   className="block w-full h-24 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
 
-            <div className="sm:col-span-4">
-              <label className="form-label" htmlFor="rent_amount">
-                Rent Amount <br />
+            <div className="sm:col-span-3">
+              <label className="form-label" htmlFor="start_date">
+                Start Date <br />
               </label>
               <input
-                value={product.rent_amount}
-                name="rent_amount"
-                onChange={(e) => {
-                  !isNaN(e.target.value) &&
-                    setProduct({
-                      ...product,
-                      [e.target.name]: e.target.value,
-                    });
-                }}
-                type="text"
-                id="rent_amount"
+              
+                name="start_date"
+                onChange={(e) =>
+                  setCoupon({ ...coupon, [e.target.name]: e.target.value })
+                }
+                type="date"
+                id="start_date"
                 className="form-control"
+                value={coupon.start_date}
               />
             </div>
 
             <div className="sm:col-span-3">
-              <label className="form-label" htmlFor="rental_place">
-                Rental Place <br />
+              <label className="form-label" htmlFor="end_date">
+                End Date <br />
               </label>
               <input
-                name="rental_place"
+              
+                name="end_date"
                 onChange={(e) =>
-                  setProduct({ ...product, [e.target.name]: e.target.value })
+                  setCoupon({ ...coupon, [e.target.name]: e.target.value })
                 }
-                type="text"
-                id="rental_place"
+                type="date"
+                id="end_date"
                 className="form-control"
-                value={product.rental_place}
+                value={coupon.end_date}
+              />
+            </div>
+
+            <div className="sm:col-span-4">
+              <label className="form-label" htmlFor="max_uses">
+                Max usage<br />
+              </label>
+              <input
+                value={coupon.max_uses}
+                name="max_uses"
+                onChange={(e) => {
+                  !isNaN(e.target.value) &&
+                    setCoupon({
+                      ...coupon,
+                      [e.target.name]: e.target.value,
+                    });
+                }}
+                type="text"
+                id="max_uses"
+                className="form-control"
               />
             </div>
 
             <div className="sm:col-span-3">
               <label className="form-label" htmlFor="image_1">
-                Images
+                Image
               </label>
               <br />
               <input
                 multiple
                 name="image_1"
                 onChange={(e) =>
-                  setProduct({
-                    ...product,
+                  setCoupon({
+                    ...coupon,
                     [e.target.name]: Array.from(e.target.files),
                   })
                 }
@@ -179,45 +216,6 @@ function AddCars() {
               />
             </div>
 
-            <div className="sm:col-span-3">
-              <label className="form-label" htmlFor="image_2">
-                Image 2
-              </label>
-              <br />
-              <input
-                multiple
-                name="image_2"
-                onChange={(e) =>
-                  setProduct({
-                    ...product,
-                    [e.target.name]: Array.from(e.target.files),
-                  })
-                }
-                type="file"
-                id="image_2"
-                className="form-control"
-              />
-            </div>
-
-            <div className="sm:col-span-3">
-              <label className="form-label" htmlFor="image_3">
-                Image 3
-              </label>
-              <br />
-              <input
-                multiple
-                name="image_3"
-                onChange={(e) =>
-                  setProduct({
-                    ...product,
-                    [e.target.name]: Array.from(e.target.files),
-                  })
-                }
-                type="file"
-                id="image_3"
-                className="form-control"
-              />
-            </div>
           </div>
 
           <div className="pt-11 text-center">
@@ -234,4 +232,4 @@ function AddCars() {
     </div>
   );
 }
-export default AddCars;
+export default AddCoupons;

@@ -1,47 +1,477 @@
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import moment from "moment"; // Import the moment library
+import { useParams } from "react-router-dom";
+import { DialogCustomAnimation } from "./ConfirmModal";
+import Navbar from "../../components/user/Navbar";
+import jwtDecode from "jwt-decode";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { BACKEND_BASE_URL } from "../../utils/Config";
+import Paypal from "./Paypal";
 
+const Checkout = () => {
+  const initialOptions = {
+    clientId:
+      "ARZWhEaMFhfAyhGiTUChP6jZktzp2M07CUtlYL6soCCFU3xcU1FZHIqKI3SHWVRj3A_Z9oXkt3lHKglw",
+    currency: "USD",
+    intent: "capture",
+  };
 
-
-import React, { useState, useEffect } from 'react';
-import { Avatar, Typography, Button } from "@material-tailwind/react";
-import {
-  MapPinIcon,
-  BriefcaseIcon,
-  BuildingLibraryIcon,
-} from "@heroicons/react/24/solid";
-import Navbar from "../components/Navbar";
-import axios from 'axios';
-import axiosInstance from "../api/apiconfig";
-import ProfileUpdateMdl from './ProfileModal';
-import { BookingCard } from './userbookinglist';
-import { DealerBookingCard } from './dealerbookinglist';
-
-
-export function Profile() {
-
-  const [modal, setModal] = useState(false);
-  const [profile, setProfile] = useState(null);
-  
-  const user_id = localStorage.getItem('id');
-  const [userData, setUserdata] = useState([]);
+  const { carId } = useParams();
+  const [car, setCar] = useState(null);
+  const [totalCost, setTotalCost] = useState(0);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const [totalDays, setTotalDays] = useState(0);
+  const [bookinstatus, setBookingStatus] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [showPayPalButton, setShowPayPalButton] = useState(false);
+  const [selectedPlace, setSelectedPlace] = useState("");
+  const [startTime, setStartTime] = useState("")
+  const [endTime, setEndTime] = useState("")
+  const [user,setUser] = useState()
+  const token = localStorage.getItem('authToken')
+  const decoded = jwtDecode(token)  
 
   useEffect(() => {
-    fetchUserData();
+    fetch(`http://localhost:8000/api/profile/${decoded.user_id}/`)
+      .then((response) => response.json())
+      .then((data) => {
+        setUser(data);
+      })
   }, []);
-  
 
-  const fetchUserData = async () => {
-    try {
-      const response = await axiosInstance.get(`/userapp/user/${user_id}/`);
-      setUserdata(response.data);
-      console.log(response.data, "ppppppppppppppppppppppppppppppppppppp");
-    } catch (error) {
-      console.error("Error fetching data:", error);
+  useEffect(() => {
+    const fetchCarDetails = async () => {
+      try {
+        const response = await axios.get(
+          BACKEND_BASE_URL + `/api/cars/${carId}/`
+        );
+        setCar(response.data);
+      } catch (error) {
+        console.error("Error fetching car details:", error);
+      }
+    };
+
+    fetchCarDetails();
+  }, [carId]);
+
+  const calculateDropOffTime = () => {
+    const dropOffDateTime = moment(startDate + " " + startTime).add(24, "hours");
+    setEndTime(dropOffDateTime.format("HH:mm"));
+  };
+
+  const currentDate = new Date().toISOString().split('T')[0];
+
+  const [startDate, setStartDate] = useState(currentDate);
+  const [endDate, setEndDate] = useState(startDate);
+
+
+  
+  const handleStartDateChange = (e) => {
+    setStartDate(e.target.value);
+    calculateTotalCost(e.target.value, endDate);
+  };
+
+  const handleEndDateChange = (e) => {
+    setEndDate(e.target.value);
+    calculateTotalCost(startDate, e.target.value);
+  };
+
+  // const handleSelectedPlace = (e) => {
+  //   setSelectedPlace(e.target.value);
+  // };
+
+  const handleStartTime = (e) =>{
+    setStartTime(e.target.value)
+  }
+
+  const calculateTotalCost = (start, end) => {
+    if (car) {
+      const startMoment = moment(start);
+      const endMoment = moment(end);
+      const numberOfDays = endMoment.diff(startMoment, "days") + 1;
+      const cost = car.rent_amount * numberOfDays;
+      const total = cost + 450;
+      setTotalCost(cost);
+      setGrandTotal(total);
+      setTotalDays(numberOfDays);
     }
   };
-    
-  
-  return (
-    <div>
 
+  const handleCheckout = async () => {
+    // Check if the ending date is greater than or equal to the starting date
+    if (new Date(endDate) < new Date(startDate)) {
+      toast.error('Ending date must be equal to or later than the starting date');
+      return;
+    }
+
+    calculateDropOffTime();
+    try {
+      const response = await axios.post(
+        BACKEND_BASE_URL + `/rentals/car-booking/`,
+        {
+          car: car.id,
+          start_date: startDate,
+          end_date: endDate,
+          user: user.id,
+          start_time: startTime,
+          end_time: endTime,
+          total_cost: grandTotal,
+        }
+      );
+  
+      if (response.status === 200) {
+        setBookingStatus("success");
+        toast.success('Success');
+      } else {
+        setBookingStatus("error");
+      }
+    } catch (error) {
+      console.error("Error booking the car:", error);
+      toast.error('Slot is not available');
+      console.error("Response data:", error.response);
+      setBookingStatus("error");
+      console.log(
+        carId,
+        startDate,
+        endDate,
+        "Enthenkilu indaaaaaaaaaaaa data in post"
+      );
+    }
+  };
+  const handlePayment = () => {
+    setShowPayPalButton(true)
+  };
+
+  if (!car) {
+    return <div>Loading...</div>; // Render a loading indicator while fetching data
+  }
+  return (
+    <>
+      <Navbar />
+      <ToastContainer/>
+      <div className="container mx-auto mt-20 rounded-xl shadow-sm shadow-black p-10 ">
+        <div className="flex ">
+          <div className="w-40 h-28">
+            <div className="w-full h-full">
+              <img
+                src={BACKEND_BASE_URL+car.image_1}
+                alt="..."
+                className="w-40 h-28"
+                width="160"
+                height="112"
+              />
+            </div>
+          </div>
+          <div className="ml-10">
+            <h2 className="text-lg font-medium">{car.product_name}</h2>
+            <div className="flex mt-1 text-sm items-center flex-wrap text-gray-500">
+              <span className="text-sm">
+                {car.model},{car.fuel}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="px-6">
+          <div className="text-xs mt-4 text-gray-500">
+            <p className="mt-2">Extra Kms @ 9/km</p>
+            <p className="mt-2">Total travel Days: {totalDays}</p>
+          </div>
+
+          <div className="flex mt-6 rounded-lg shadow-sm shadow-black p-8 ">
+            <div className="w-full border-l border-y py-2 px-4 rounded-l-lg">
+              <div className="flex justify-between items-center">
+                <h4 className="font-medium">Pick up date</h4>
+                <input
+                  type="date"
+                  selected={startDate}
+                  onChange={ (e) => handleStartDateChange(e)}
+                  min={currentDate}
+                  className="text-sm text-pistachio"
+                />
+              </div>
+            </div>
+
+            <div className="border my-2"></div>
+            <div className="w-full border-r border-y py-2 px-4">
+              <div className="flex justify-between items-center">
+                <h4 className="font-medium">Drop off date</h4>
+                <input
+                  type="date"
+                  selected={endDate}
+                  onChange={ (e) => handleEndDateChange(e)}
+                  min={startDate}
+                  className="text-sm text-pistachio"
+                />
+              </div>
+            </div>
+            {/* <div className="border my-2"></div>
+            <div className="w-full border-r border-y py-2 px-4">
+              <div className="flex justify-between items-center">
+                <select
+                  id="dropdown"
+                  value={selectedPlace}
+                  onChange={handleSelectedPlace}
+                >
+                  <option value="">Select an option</option>
+                  <option key={car.id}>{car.rental_place}</option>
+                </select>
+                {selectedPlace && <p>Selected option: {selectedPlace}</p>}
+              </div>
+            </div> */}
+            <div className="border my-2"></div>
+
+            <div className="w-full border-l border-y py-2 px-4 rounded-l-lg">
+              <div className="flex justify-between items-center">
+                <h4 className="font-medium">Pickup TIme</h4>
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={handleStartTime}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="border rounded-xl mt-6 px-4 py-2  rounded-r-lg  border-gray-600 p-20 ">
+            <h4 className="font-medium mb-2">Price Details</h4>
+            <div className="px-3">
+              <div>
+                <div className="flex justify-between text-sm text-gray-600 my-1">
+                  <div className="flex items-center">
+                    <span>Base Fare</span>
+                    <svg
+                      stroke="currentColor"
+                      fill="currentColor"
+                      strokeWidth="0"
+                      viewBox="0 0 16 16"
+                      className=" text-pistachio ml-2 cursor-pointer"
+                      height="1em"
+                      width="1em"
+                      xmlns="http://www.w3.org/2000/svg"
+                    ></svg>
+                  </div>
+                  <div>
+                    <span className="text-pistachio">{car.rent_amount}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600 my-1">
+                  <div className="flex items-center">
+                    <span>Fare for Selected No. of Days</span>
+                  </div>
+                  <div>
+                    <span className="text-pistachio">{totalCost}</span>
+                  </div>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600 my-1">
+                  <div className="flex items-center">
+                    <span>Taxes and Fees</span>
+                  </div>
+                  <div>
+                    <span className="text-pistachio">₹450</span>
+                  </div>
+                </div>
+                <div className="border-b mt-2"></div>
+                <div className="flex justify-between text-sm font-medium my-2">
+                  <div className="flex items-center">
+                    <span>Total Amount</span>
+                  </div>
+                  <div>
+                    <span className="text-pistachio">{grandTotal}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full flex items-center justify-between p-1 mt-6 rounded-xl shadow-sm shadow-black ">
+            <div className="flex flex-col items-center justify-center p-10 ">
+              <h2 className="font-bold ">{grandTotal}</h2>
+              <p className=" ">for 57 kms without fuel</p>
+            </div>
+
+            <div className="flex items-center justify-center p-10 ">
+            {showPayPalButton ? (
+  <Paypal grandTotal={grandTotal} />
+) : (
+  <button
+    className="bg-yellow-600 px-5 py-3 rounded-lg"
+    onClick={handlePayment}
+  >
+    Book Now
+  </button>
+)}
+
+              {/* <button
+                className="bg-yellow-600 px-5 py-3 rounded-lg "
+                onClick={() => setIsDialogOpen(true)}
+              >
+                Book Now
+              </button> */}
+            </div>
+          </div>
+        </div>
+        
+
+        <DialogCustomAnimation
+          open={isDialogOpen}
+          handler={() => setIsDialogOpen(false)}
+          onConfirm={handleCheckout}
+          totalCost={totalCost}
+          grandTotal={grandTotal}
+          totalDays={totalDays}
+          showPayPalButton={showPayPalButton}
+          handlePayment={handlePayment}
+          initialOptions={initialOptions}
+          handleCheckout={handleCheckout}
+        />        
+      </div>
+    </>
+  );
+};
+
+export default Checkout;
+
+
+
+
+
+
+import React from 'react';
+import axios from 'axios';
+import { useState } from 'react';
+import useRazorpay from 'react-razorpay';
+import logoImage from '../../../assets/logo.png';
+import jwtDecode from 'jwt-decode';
+
+function VipPay() {
+  const token = localStorage.getItem('user');
+  const decoded = jwtDecode(token);
+  const [Razorpay] = useRazorpay();
+  const [amount, setAmount] = useState(500);
+
+ 
+  const complete_payment = (payment_id,order_id,signature) => {
+  
+    axios
+    .post(127.0.0.1:8000/payment/order/complete/${decoded.user_id}/, {
+      "payment_id": payment_id,
+      "order_id": order_id,
+      "signature": signature,
+      "amount": amount,
+      "currency": 'INR',
+    }, {
+      
+    })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
+  const razorpayPayment = () => {
+  
+    axios
+    .post(127.0.0.1:8000/payment/order/create/${decoded.user_id}/, {
+      // "payment_id": payment_id,
+      // "order_id": order_id,
+      // "signature": signature,
+      "amount": amount,
+      "currency": 'INR',
+    }, {
+      
+    })
+      .then(function (response) {
+        console.log(response.data.data);
+        const order_id = response.data.data.id;
+
+        const options = {
+          key: 'rzp_test_BYEW8iXywrLllV',
+          name: 'Talki',
+          description: 'VIP membership upgrade',
+          image: logoImage,
+          order_id: order_id,
+          handler: function (response) {
+            complete_payment(
+              response.razorpay_payment_id,
+              response.razorpay_order_id,
+              response.razorpay_signature
+            );
+          },
+          prefill: {
+            name: 'Talki',
+            email: 'violet.store.she@example.com',
+            contact: '9999999999',
+          },
+          notes: {
+            address: 'Talki Team',
+          },
+          theme: {
+            color: '#3399cc',
+          },
+        };
+
+        const rzp1 = new Razorpay(options);
+
+        rzp1.on('payment.failed', function (response) {
+          alert(response.error.code);
+          alert(response.error.description);
+          alert(response.error.source);
+          alert(response.error.step);
+          alert(response.error.reason);
+          alert(response.error.metadata.order_id);
+          alert(response.error.metadata.payment_id);
+        });
+
+        rzp1.open();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  return (
+    <div className="lg:m-16 m-10">
+      <div className="shadow-lg lg:p-14 p-7 rounded-md">
+        <div className="flex justify-end">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="25"
+            height="25"
+            fill="currentColor"
+            className="bi bi-x-circle-fill"
+            viewBox="0 0 25 25"
+          >
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z" />
+          </svg>
+        </div>
+        <h6 className="text-lg">
+          "Unlock a World of English Learning! Become a VIP Member Today and Enjoy 30 Days of Uninterrupted Conversations with Our Highly Skilled Trainers. Say Goodbye to Delays and Hello to Fluency!"
+        </h6>
+
+        <div className="flex justify-center h-screen">
+          <div className="bg-gray-100 p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h1 className="text-2xl ml-24 font-bold mb-4">VIP Membership</h1>
+            <h1 className="text-5xl ml-40 font-bold mb-4">₹500</h1>
+            <p className="text-lg">
+              Enjoy 30 days of fluent speaking with our best trainers. Live chat and video calls included.
+            </p>
+            <button
+              type="button"
+              onClick={razorpayPayment}
+              className="py-2 px-4 text-white mt-20 ml-40 rounded-xl border bg-gray-900 hover:bg-gray-600 active:bg-black focus:outline-none focus:ring focus:ring-black hover:drop-shadow-xl"
+            >
+              UPGRADE NOW
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
+}
+
+export default VipPay;

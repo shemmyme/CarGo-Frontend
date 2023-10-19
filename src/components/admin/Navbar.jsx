@@ -31,6 +31,8 @@ function Navbar() {
                         <a onClick={() => navigate('/admin/user')} className="px-2.5 py-2 text-gray-700 text-sm transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:mx-2 hover:text-blue-500 hover:cursor-pointer">USER</a>
                         <a onClick={() => navigate('/admin/listcar')} className="px-2.5 py-2 text-gray-700 text-sm transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:mx-2  hover:text-blue-500 hover:cursor-pointer">VEHICLE</a>
                         <a onClick={() => navigate('/admin/coupon')} className="px-2.5 py-2 text-gray-700 text-sm transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:mx-2  hover:text-blue-500 hover:cursor-pointer">COUPON</a>
+                        <a onClick={() => navigate('/admin/chat')} className="px-2.5 py-2 text-gray-700 text-sm transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:mx-2  hover:text-blue-500 hover:cursor-pointer">CHAT</a>
+                        <a onClick={() => navigate('/admin/bookings')} className="px-2.5 py-2 text-gray-700 text-sm transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 md:mx-2  hover:text-blue-500 hover:cursor-pointer">BOOKINGS</a>
                         
 
                     </div>

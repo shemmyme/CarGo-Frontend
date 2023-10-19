@@ -12,6 +12,7 @@ import axios from 'axios';
 import { BACKEND_BASE_URL } from '../../utils/Config';
 import './CarDetails.css';  
 import jwtDecode from "jwt-decode";
+import ReviewForm from './ReviewPost';
 
 
 
@@ -21,10 +22,16 @@ const CarDetails = () => {
   const [car, setCar] = useState(null);
   const [currentImage, setCurrentImage] = useState('');
   const [userLoggedIn, setUserLoggedIn] = useState(false); 
-  const [userVerified, setUserVerified] = useState(false);  
+  const [userVerified, setUserVerified] = useState(false); 
+  const [reviews,setReviews] = useState('')
+  const [selectedCarId, setSelectedCarId] = useState(null);
+  const token = localStorage.getItem("authToken");
+
 
   const nav = useNavigate();
-
+  
+  
+  
   useEffect(() => {
     const fetchCarDetails = async () => {
       try {
@@ -32,15 +39,21 @@ const CarDetails = () => {
           BACKEND_BASE_URL + `/api/cars/${carId}/`
         );
         setCar(response.data);
-        setCurrentImage(response.data.image_1);
+        setCurrentImage(response.data.image_1)
+        setSelectedCarId(response.data.id)
       } catch (error) {
         console.error('Error fetching car details:', error);
       }
     };
 
     fetchCarDetails();
+    console.log(car,'car');
+    console.log(selectedCarId,'carid');;
 
-    const token = localStorage.getItem("authToken");
+    
+
+   
+
 
 if (token) {
   setUserLoggedIn(true);
@@ -51,12 +64,28 @@ if (token) {
     setUserVerified(false);
   }
   console.log(decoded,'nokkkye');
-  console.log(userVerified,'verified aano nok');
 } else {
   setUserLoggedIn(false);
   setUserVerified(false);
 }
   }, [carId]);
+
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          BACKEND_BASE_URL + `/rentals/reviews/list/${selectedCarId}`);
+        setReviews(response.data);
+      } catch (error) {
+        console.error('Error getting reviews list', error);
+      }
+    };
+  
+    fetchReviews();
+  }, [selectedCarId]);
+  
+
   
 
   const handleImageClick = (imageUrl) => {
@@ -159,11 +188,35 @@ if (token) {
                 </Grid>
                 <Grid item xs={6}>
                    <Button onClick={()=> nav('/chat') } variant="contained" color="primary" fullWidth>
-                    Chat with Owner
+                    Chat To Know More
                   </Button>
                 </Grid>
               </Grid>
-              <ul className="reviews-list h-25 my-4">No reviews uploaded</ul>
+              {reviews.length==0?(
+          <p className="text-center">No Reviews Yets</p>
+
+              ):(
+                reviews.map((review)=>(
+        <div key={review.id} className="max-w-3xl">
+          <div className="m-4 block rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:shadow-black/20">
+            <div className="md:flex md:flex-row">
+     
+              <div  className="md:ml-6">
+                <p className="mb-6 font-light text-neutral-500 dark:text-neutral-300">
+                 {review.comment}
+                </p>
+                <p className="mb-2 text-xl font-semibold text-neutral-800 dark:text-neutral-200">
+                  {review.rating}
+                </p>
+                <p className="mb-0 font-semibold text-neutral-500 dark:text-neutral-400">
+                  
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        ))
+        )}
             </CardContent>
           </Card>
         </Grid>

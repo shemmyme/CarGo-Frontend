@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BACKEND_BASE_URL } from '../../utils/Config';
-import axios from 'axios';
 import { useCarsContext } from '../context/CarsContext';
 
 const Vehicle = () => {
   const navigate = useNavigate();
-  const {cars, deleteCar} = useCarsContext()
+  const { deleteCar} = useCarsContext()
+  const {cars} = useCarsContext()
+  const [search,setSearch] = useState('')
+
+
 
   const handleRemoveCar = async (carId) => {
     try {
@@ -16,8 +18,29 @@ const Vehicle = () => {
     }
   };
 
+  const handleSearch=(e)=>{
+    setSearch(e.target.value)
+  }
+ 
+  
   return (
     <section className="container px-4 mx-auto mt-10">
+       <div className="relative mt-4 md:mt- w-1/2 ">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                            <svg className="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                        </span>
+                        
+
+                        <input
+                            type="text"
+                            className="w-full py-2 pl-10 pr-4 text-gray-700 bg-white border rounded-lg dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-blue-300"
+                            placeholder="Search"
+                            value={search}
+                            onChange={handleSearch}
+                        />
+                    </div>
       <div className="flex items-center gap-x-3">
         <h2 className="text-lg font-medium text-gray-800 dark:text-white">
           Total Cars
@@ -82,7 +105,10 @@ const Vehicle = () => {
                 </thead>
 
                 <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800">
-                  {cars.map((car) => (
+                {cars.length === 0 ? (
+          <p className="text-center">No cars found</p>
+        ) :
+        (cars.map((car) => (
                     <tr key={car.id}>
                       <td className="py-3 px-4 text-sm font-medium text-gray-800 dark:text-white">
                         {car.product_name}
@@ -142,7 +168,7 @@ const Vehicle = () => {
                         </div>
                       </td>
                     </tr>
-                    ))}
+                    )))}
                   </tbody>
                 </table>
               </div>

@@ -2,43 +2,22 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BACKEND_BASE_URL } from '../../utils/Config';
 import jwtDecode from 'jwt-decode';
+import { useParams } from 'react-router-dom';
 
 const ReviewForm = () => {
+  const {bookingId} = useParams()
+  console.log(bookingId,'id');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
-  const [bookingId, setBookingId] = useState(null);
-  const [carId, setCarId] = useState(null); // Initialize as null
   const [bookings, setBookings] = useState([]);
-  const [filteredBookings, setFilteredBookings] = useState([]);
-  const token = localStorage.getItem('authToken');
-  const decoded = jwtDecode(token);
-
 
   useEffect(() => {
-    listBookings();
-  }, [decoded.user_id]);
-
-  const listBookings = () => {
-    fetch(`http://localhost:8000/rentals/profile/bookings`)
+    fetch(`http://localhost:8000/rentals/profile/bookings/${bookingId}`)
       .then((response) => response.json())
       .then((data) => {
-        // Filter bookings to include only the ones belonging to the logged-in user
-        const filteredBookings = data.filter((booking) => booking.user.id === decoded.user_id);
         setBookings(data);
-        setFilteredBookings(filteredBookings);
       });
-  };
-
-  // const handleBookingSelect = (e) => {
-  //   const selectedBookingId = e.target.value;
-  //   setBookingId(selectedBookingId);
-
-  //   // Find the selected booking and extract the car_id
-  //   const selectedBooking = filteredBookings.find((booking) => booking.id === selectedBookingId);
-  //   if (selectedBooking) {
-  //     setCarId(selectedBooking.car.id);
-  //   }
-  // };
+  }, [bookingId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -83,7 +62,7 @@ const ReviewForm = () => {
           </option>
         ))}
       </select> */}
-       <h2>Review Booking ID: {bookingId}</h2>
+       <h2>Review Booking ID: {bookings.id}</h2>
       {bookings ? (
         <form onSubmit={handleSubmit}>
           <div>

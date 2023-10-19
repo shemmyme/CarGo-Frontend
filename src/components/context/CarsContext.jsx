@@ -10,24 +10,34 @@ export function useCarsContext(){
 export function CarsProvider({children}){
     
     const [cars, setCars] = useState([]);
+    const[search,setSearch] = useState()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(BACKEND_BASE_URL + '/admin/listcar/');
-        if (response.status === 200) {
-          const data = response.data;
-          setCars(data); 
-        } else {
-          console.error('Failed to fetch car data.');
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await axios.get(
+            BACKEND_BASE_URL + '/admin/listcar/',
+            {
+              params: {
+                search: search,
+              },
+            }
+          );
+          if (response.status === 200) {
+            const data = response.data;
+            setCars(data);
+          } else {
+            console.error('Failed to fetch car data.');
+          }
+        } catch (error) {
+          console.log('Error fetching car data:', error);
         }
-      } catch (error) {
-        console.log('Error fetching car data:', error);
-      }
-    };
+      };
+  
+      fetchData();
+    }, [search]);
 
-    fetchData();
-  }, []);
+    
 
   const deleteCar = async (carId) => {
     try {

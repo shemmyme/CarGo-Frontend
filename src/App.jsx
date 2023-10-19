@@ -26,6 +26,10 @@ import CarDet from "./pages/User/CarDet";
 import ChatSection from "./components/user/Chat";
 import Checkout from "./pages/User/Checkout";
 import AdminChatBox from "./pages/Admin/Chat"
+import Bookings from './pages/Admin/Bookings'
+import ReviewForm from "./components/user/ReviewPost";
+import AddCoupons from "./components/admin/AddCoupon";
+import BookingList from "./pages/User/BookingList";
 function App() {
 
  
@@ -68,13 +72,25 @@ function App() {
             </UsersProvider>
             </UserProtectedRoutes>
           } />
+          <Route path="/profile/bookings" element={
+            <UserProtectedRoutes>
+            <UsersProvider>
+              <BookingList/>
+            </UsersProvider>
+            </UserProtectedRoutes>
+          } />
+          <Route path="/review/:bookingId" element={
+            <UserProtectedRoutes>
+            <UsersProvider>
+              <ReviewForm/>
+            </UsersProvider>
+            </UserProtectedRoutes>
+          } />
 
-
-
-
-        
         {/* admin Route  */}
+
         <Route path="/admin" element={<AdminLogin />} />
+          
         <Route path="/admin/home" element={
               <AdminProtectedRoutes>
                 <CarsProvider>
@@ -90,7 +106,7 @@ function App() {
                 <UsersProvider>
                   <ManageUser />
                 </UsersProvider>
-              </AdminProtectedRoutes>
+              </AdminProtectedRoutes> 
             }
             />
         <Route path="/admin/listcar" element={
@@ -111,7 +127,22 @@ function App() {
                 <AddCars/>
               </AdminProtectedRoutes>
             }/>
+            <Route path='/admin/addcoupons' element={
+              <AdminProtectedRoutes>
+                <AddCoupons/>
+              </AdminProtectedRoutes>
+            }/>
+            <Route path='/admin/bookings' element={
+              <AdminProtectedRoutes>
+                <Bookings/>
+              </AdminProtectedRoutes>
+            }/>
             <Route path='/admin/chat' element={
+              <AdminProtectedRoutes>
+                <AdminChatBox/>
+              </AdminProtectedRoutes>
+            }/>
+            <Route path='/admin/chat/chatbox/:adminid' element={
               <AdminProtectedRoutes>
                 <AdminChatBox/>
               </AdminProtectedRoutes>

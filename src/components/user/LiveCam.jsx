@@ -3,6 +3,7 @@ import Webcam from "react-webcam";
 import axios from "axios"; 
 import { BACKEND_BASE_URL } from "../../utils/Config";
 import jwtDecode from "jwt-decode";
+import toast from "react-hot-toast";
 
 function LiveCam() {
     const token = localStorage.getItem("authToken");
@@ -12,24 +13,27 @@ function LiveCam() {
   
     const capture = async () => {
       const imgSrc = webcamRef.current.getScreenshot();
+      if (!imgSrc) {
+        console.error("Failed to capture a photo.");
+        return;
+      }
+    
       setImg(imgSrc);
-  
-      
+    
       try {
         const formData = new FormData();
         formData.append("livePhoto", dataURItoBlob(imgSrc));
-        
-  
+    
         const response = await axios.patch(
-            BACKEND_BASE_URL + `/api/profileup/${decoded.user_id}/`,
-            formData,
+          BACKEND_BASE_URL + `/api/profileup/${decoded.user_id}/`,
+          formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
             },
           }
         );
-  
+    
         if (response.status === 201) {
           console.log("Live photo uploaded successfully!");
         } else {
@@ -37,8 +41,10 @@ function LiveCam() {
         }
       } catch (error) {
         console.error("Error uploading live photo:", error);
+        
       }
     };
+    
   
     // Function to convert data URI to Blob
     function dataURItoBlob(dataURI) {

@@ -6,8 +6,9 @@ import Profilebox from "../../components/user/Profilebox";
 export function ProfilePage() {
   return (
     <div>
+        <Navbar/>
+
       <div className="overflow-x-hidden md:flex">
-        {/* <Navbar/> */}
         <div className="hidden lg:block">
           <Profilebar />
         </div>

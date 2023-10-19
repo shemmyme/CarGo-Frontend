@@ -1,9 +1,9 @@
 import axios from "axios";
-import { BACKEND_BASE_URL } from "../../utils/Config";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import LiveCam from "./LiveCam";
 import jwtDecode from "jwt-decode";
+import { BACKEND_BASE_URL } from "../../utils/config";
 
 const Profilebox = () => {
   const token = localStorage.getItem("authToken");
@@ -16,6 +16,7 @@ const Profilebox = () => {
 
   const [user, setUser] = useState(initialUser);
   const [photo, setPhoto] = useState([]);
+  
   useEffect(() => {
     fetch(`http://localhost:8000/api/profile/${decoded.user_id}/`)
       .then((response) => response.json())
@@ -153,7 +154,7 @@ const Profilebox = () => {
                 <div class="w-full rounded overflow-hidden ">
                 <img
                   class=" h-64 w-full lg:ml-10  rounded overflow-hidden shadow-lg"
-                  src={user.licenseFront instanceof File ? URL.createObjectURL(user.licenseFront) : `http://127.0.0.1:8000/${user.licenseFront}`}
+                  src={ BACKEND_BASE_URL+user.licenseFront}
                   alt="License Front"
                 />
               </div>
@@ -191,7 +192,7 @@ const Profilebox = () => {
               <div class="w-full rounded overflow-hidden ">
                 <img
                   class=" h-64 w-full lg:ml-10  rounded overflow-hidden shadow-lg"
-                  src={user.licenseBack instanceof File ? URL.createObjectURL(user.licenseBack) : `http://127.0.0.1:8000/${user.licenseBack}`}
+                  src={ BACKEND_BASE_URL+user.licenseFront}
                   alt="License Back"
                 />
               </div>

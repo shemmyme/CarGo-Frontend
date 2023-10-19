@@ -1,80 +1,254 @@
-import React from "react";
-import { ToastContainer, toast } from "react-toastify";
+import React, { useEffect, useState, useRef } from 'react';
+import { w3cwebsocket as W3CWebSocket } from 'websocket';
+import axios from "axios";
+import { BACKEND_BASE_URL, wsApiUrl } from '../../utils/config';
+import jwtDecode from 'jwt-decode';
 
-export default function ChatSection() {
-  return (
-    <div className='flex overflow-hidden flex-col w-full'>
-    {/* <RecentChats allChat={allChat} selectedChat={selectedChat} handleProvider={handleProvider} role={'user'} /> */}
-    <div>
-        <div className="flex h-screen antialiased text-gray-800 w-full ">
-            <div className="flex flex-row h-full w-full overflow-x-hidden">
-                <div className="flex flex-col flex-auto mt-1 sm:p-6 w-full">
-                    <div className="flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-gray-100 h-full p-4">
-                        <div className="flex flex-col h-full overflow-x-auto scrollbar-hide mb-4">
-                            <div className="flex flex-col h-full">
-                                <div key="sample-message" className="grid grid-cols-12 gap-y-2">
-                                    <div className="col-start-7 col-end-13 p-3 rounded-lg">
-                                        <div className="flex items-center justify-start flex-row-reverse mt-1">
-                                            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                                                <img
-                                                    src="https://res.cloudinary.com/dq0tq9rf5/image/upload/v1688557091/tpqthkuzphqpykfyre7i.jpg"
-                                                    alt="Avatar"
-                                                    className="h-full w-full rounded-full"
-                                                />
-                                            </div>
-                                            <div className="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl">
-                                                <div>Sample Message Content</div>
-                                                <small className="text-xs text-gray-400">Sample Time</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div key="sample-message" className="col-start-1 col-end-7 p-3 rounded-lg">
-                                        <div className="flex flex-row items-center">
-                                            <div className="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0">
-                                                <img
-                                                    src="https://res.cloudinary.com/dq0tq9rf5/image/upload/v1688557091/tpqthkuzphqpykfyre7i.jpg"
-                                                    alt="Avatar"
-                                                    className="h-full w-full rounded-full"
-                                                />
-                                            </div>
-                                            <div className="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl">
-                                                <div>Sample Message Content</div>
-                                                <small>Sample Time</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+function UserChat() {
+
+    const [recipientdetails, setRecipientDetails] = useState({})
+    const [senderdetails, setSenderDetails] = useState({});
+    const [senderid, setSenderId] = useState(null);
+    const [recipientid, setRecipientId] = useState(null)
+    const [clientstate, setClientState] = useState('');
+    const [messages, setMessages] = useState([]);
+    const adminId = 1
+    const token = localStorage.getItem('authToken')
+    const  {user_id}  = jwtDecode(token)
+    const messageRef = useRef()
+    const [userId, setUserId] = useState(null);
+
+
+
+    const setUserProfileDetails = async () => {
+        axios.get(`${BACKEND_BASE_URL}/api/profile-user/${adminId}/`).then((response) => {
+            console.log(response.data,'recieptent response.data.user');
+            if (response.status == 200) {
+                setRecipientDetails(response.data.user)
+                
+            }
+        })
+    }
+
+    const setSenderProfile = async () => {
+        axios.get(`${BACKEND_BASE_URL}/api/profile-user/${user_id}/`).then((response) => {
+            console.log(response.data,'sender response.data')
+            if (response.status == 200) {
+                setSenderDetails(response.data.user)
+            }
+        })
+    }
+
+    useEffect(() => {
+        setUserProfileDetails()
+        setSenderProfile()
+    }, [])
+
+    const setUpChat = () => {
+        axios.get(`${BACKEND_BASE_URL}/chat/user-previous-chats/${senderid}/${recipientid}/`).then((response) => {
+            if (response.status == 200) {
+                setMessages(response.data)
+            }
+        })
+
+    const client = new W3CWebSocket(`${wsApiUrl}/ws/chat/${senderid}/?${recipientid}`);
+    console.log(client,'clientttttttttttttttttttttt');
+    setClientState(client)
+
+    client.onopen = () => {
+      console.log('WebSocket Client Connected');
+      setClientState(client); 
+    };
+
+        client.onmessage = (message) => {
+            const dataFromServer = JSON.parse(message.data);
+            if (dataFromServer) {
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    {
+                        message: dataFromServer.message,
+                        sender_username: dataFromServer.senderUsername,
+                    },
+                ]);
+            }
+        };
+
+        client.onclose = () => {
+            console.log('Websocket disconnected');
+        }
+
+        return () => {
+            client.close();
+        };
+    }
+
+    useEffect(() => {
+        if (user_id) {
+            setUserId(user_id);
+            console.log(userId,'usefect');
+            setUserProfileDetails();
+            setSenderProfile();
+        }
+    }, [user_id]);
+
+    useEffect(() => {
+        if (userId && adminId) {
+            setSenderId(userId);
+            setRecipientId(adminId);
+            console.log(recipientid,senderid,'idssssssssssssssssssssssss');
+            setUpChat();
+        }
+    }, [userId, adminId]);
+
+    useEffect(() => {
+        console.log(senderid,'senderrrrrrrrrid');
+        if (senderid != null && recipientid != null) {
+            setUpChat()
+        }
+    }, [senderid, recipientid, adminId])
+
+   
+
+    const onButtonClicked = () => {
+        if (!clientstate) {
+            console.error('WebSocket client is not initialized.');
+            return;
+          }
+
+          if (messageRef.current.value.trim() == "") {
+            return
+          }
+
+        clientstate.send(
+            JSON.stringify({
+                message: messageRef.current.value,
+                senderUsername: senderdetails.username,
+                receiverUsername: recipientdetails.username,
+            })
+        );
+
+        messageRef.current.value = '';
+    };
+    // ....................................
+    useEffect(() => {
+        const el = document.getElementById('messages');
+        el.scrollTop = el.scrollHeight;
+    }, []);
+    
+    return (
+        <div className="flex-1 p-2 sm:p-6 justify-between flex flex-col h-screen">
+            <div className="flex sm:items-center justify-between py-3 border-b-2 border-gray-200">
+                <div className="relative flex items-center space-x-4">
+                    <div className="relative">
+                        <span className="absolute text-green-500 right-0 bottom-0">
+                            <svg width="20" height="20">
+                                <circle cx="8" cy="8" r="8" fill="currentColor"></circle>
+                            </svg>
+                        </span>
+                        <img
+                            src={BACKEND_BASE_URL + senderdetails?.profile_img}
+                            alt="..."
+                            className="w-10 sm:w-16 h-10 sm:h-16 rounded-full"
+                        />
+                    </div>
+
+                    <div className="flex flex-col leading-tight">
+                        <div className="text-2xl mt-1 flex items-center">
+                            <span className="text-gray-700 mr-3">CarGo</span>
                         </div>
-                        <form >
-                            <div className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4">
-                                <div className="flex-grow ml-4">
-                                    <div className="relative w-full">
-                                        <input
-                                            type="text"
-                                            className="flex w-full border rounded-xl focus:outline-none focus:border-indigo-300 pl-4 h-10"
-                                            placeholder="Type your message..."
-                                            // value={newMessage}
-                                            // onChange={handleNewMessage}
-                                        />
+                        <span className="text-lg text-gray-600">Admin</span>
+                    </div>
+                </div>
+            </div>
+            <div
+                id="messages"
+                className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+            >
+                <div
+                    id="messages"
+                    className="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch"
+                >
+                    {
+
+                        messages.map((message) => {
+                            console.log(message,'userside msmsmsmsm');
+
+                            if (message.sender_username == recipientdetails.username) {
+
+                                return (
+                                    <div className="chat-message">
+
+                                        <div className="flex items-end">
+                                            <div className="flex flex-col space-y-2 text-lg max-w-lg mx-2 order-2 items-start">
+                                                <div>
+                                                    <span className="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
+                                                        {message.message}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <img
+                                                src={BACKEND_BASE_URL + senderdetails?.profile_img}
+                                                alt="My profile"
+                                                className="w-8 h-8 rounded-full order-1"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="ml-4">
-                                    <button
-                                        type="submit"
-                                        className="flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 rounded-xl text-white px-4 py-1 flex-shrink-0"
-                                    >
-                                        <span>Send</span>
-                                        <span className="ml-2"></span>
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
+                                )
+                            }
+                            else {
+                                return (
+                                    <div className="chat-message">
+                                        <div className="flex items-end justify-end">
+                                            <div className="flex flex-col space-y-2 text-lg max-w-xs mx-2 order-1 items-end">
+                                                <div>
+                                                    <span className="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white">
+                                                        {message.message}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <img
+                                                src={BACKEND_BASE_URL + recipientdetails?.profile_img}
+                                                className="w-8 h-8 rounded-full order-2"
+                                            />
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        })
+                    }
+                </div>
+            </div>
+            <div className="border-t-2 border-gray-200 px-4 pt-4 sm:mb-0">
+                <div className="relative flex mb-28">
+                    <input
+                        ref={messageRef}
+                        type="text"
+                        placeholder="Write your message!"
+                        className="w-full focus:outline-none focus:placeholder-gray-400 text-gray-600 placeholder-gray-600 pl-12 bg-gray-200 rounded-2xl py-3"
+                    />
+                    <div className="absolute right-0 items-center inset-y-0 hidden sm:flex">
+                        <button
+                            onClick={(e) => onButtonClicked()}
+                            type="button"
+                            className="inline-flex items-center justify-center rounded-2xl px-4 py-3 transition duration-500 ease-in-out text-white bg-customColor hover:bg-blue-900 focus:outline-none"
+                        >
+                            <span className="font-extrabold">SEND</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                className="h-6 w-6 ml-2 transform rotate-90"
+                            >
+                                <path
+                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"
+                                ></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-  )
+    )
 }
+
+export default UserChat

@@ -1,14 +1,18 @@
+import axios  from 'axios';
 import React from 'react'
+import { useState,useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { BACKEND_BASE_URL } from '../../utils/Config';
 
 function Chatlist() {
     const [recipientdet, setRecipientDet] = useState([]);
-    const [activeEmployeeId, setActiveEmployeeId] = useState(null);
-    // const [searchQuery, setSearchQuery] = useState('');
+    const [activeUserId, setActiveUserId] = useState(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
     const setUserProfileDet = async () => {
         try {
             const response = await axios.get(
-                `${BACKEND_BASE_URL}/user/employelist/`
+                `${BACKEND_BASE_URL}/admin/users/`
             );
             setRecipientDet(response.data);
             console.log("Employee data:", response.data);
@@ -21,20 +25,20 @@ function Chatlist() {
         setUserProfileDet();
     }, []);
 
-    const handleEmployeeClick = (employeeId) => {
-        setActiveEmployeeId(employeeId);
+    const handleUserClick = (userId) => {
+        setActiveUserId(userId);
     };
 
-    // const handleSearchInputChange = (event) => {
-    //     setSearchQuery(event.target.value);
-    // };
+    const handleSearchInputChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
 
-    // const filteredRecipients = recipientdet
-    //     .filter((employee) =>
-    //         employee.first_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //         employee.last_name.toLowerCase().includes(searchQuery.toLowerCase())
-    //     )
-    //     .sort((a, b) => a.first_name.localeCompare(b.first_name));
+    const filteredRecipients = recipientdet
+          .filter((user) =>
+              user.username.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+          .sort((a, b) => a.username.localeCompare(b.username))
+    ;
   return (
     <div className="border-r border-gray-300 lg:col-span-1">
     <div className="mx-3 my-3">
@@ -50,33 +54,33 @@ function Chatlist() {
                 className="block w-full py-2 pl-10 bg-gray-100 rounded-xl outline-none"
                 name="search"
                 placeholder="Search"
-                // value={searchQuery}
-                // onChange={handleSearchInputChange}
+                value={searchQuery}
+                onChange={handleSearchInputChange}
             />
         </div>
     </div>
 
     <ul className="overflow-auto h-[32rem]">
-        <h2 className="my-2 mb-2 ml-2 text-xl font-bold text-gray-600">Chats</h2>
+        <h2 className="my-2 mb-2 ml-2 text-xl font-bold text-gray-600"></h2>
 
-        {filteredRecipients.map((employee) => (
-            <li>
+        {filteredRecipients.map((user) => (
+            <li key={user.id}>
                 <a
-                    onClick={() => handleEmployeeClick(employee.id)}
-                    className={`flex items-center rounded-xl px-3 mb-3 py-2 text-sm transition duration-150 ease-in-out  cursor-pointer focus:outline-none ${activeEmployeeId === employee.id ? ' bg-indigo-300' : 'bg-gray-100 text-gray-600 border-black'
+                    onClick={() => handleUserClick(user.id)}
+                    className={`flex items-center rounded-xl px-3 mb-3 py-2 text-sm transition duration-150 ease-in-out  cursor-pointer focus:outline-none ${activeUserId === user.id ? ' bg-indigo-300' : 'bg-gray-100 text-gray-600 border-black'
                         }`}
                 >
-                    <img className="object-cover w-10 h-10 rounded-full" src='sjsjs' alt="username" />
-                    <Link to={`/admin/chatbox/${employee.id}`}>
+                    <img className="object-cover w-10 h-10 rounded-full" src={BACKEND_BASE_URL + user.profile_img} alt="" />
+                    <Link to={`/admin/chat/chatbox/${user.id}/`}>
                         <div className="w-full pb-2">
                             <div className="flex justify-between">
-                                <span className="block ml-2 font-bold">name</span>
+                                <span className="block ml-2 font-bold">{user.username}</span>
                             </div>
                         </div>
                     </Link>
                 </a>
             </li>
-         ))}
+         ))} 
     </ul>
 </div>
 );
