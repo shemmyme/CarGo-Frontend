@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {DialogCustomAnimation} from './CancelModal'
 import { button } from '@material-tailwind/react';
+import { ReviewModal } from './ReviewModal';
+import {toast,Toaster} from 'react-hot-toast';
+
 
 const Booking = () => {
   const nav = useNavigate();
@@ -13,6 +16,8 @@ const Booking = () => {
   const [bookings, setBookings] = useState([]);
   const [filteredBookings, setFilteredBookings] = useState([]);
   const [modalOpen,setModalOpen]= useState(false)
+  const [booking,setBooking]= useState(false)
+
 
   useEffect(() => {
     fetch(`http://localhost:8000/api/profile/${decoded.user_id}/`)
@@ -36,6 +41,18 @@ const Booking = () => {
       .then((data) => {
         // Filter bookings to include only the ones belonging to the logged-in user
         const filteredBookings = data.filter((booking) => booking.user.id === decoded.user_id);
+
+        console.log('Original created_at values:', filteredBookings.map(booking => booking.created_date));
+
+        filteredBookings.sort((a, b) => {
+          // Convert creation dates to Date objects for comparison
+          const dateA = new Date(a.created_date);
+          const dateB = new Date(b.created_date);
+
+          // Sort in descending order
+          return dateB - dateA;
+        });
+
         setBookings(data);
         setFilteredBookings(filteredBookings);
         console.log(filteredBookings, 'filtered bookings');
@@ -43,12 +60,14 @@ const Booking = () => {
   }
 
 function handlButton(bookingId){
-  setBookingId(bookingId)
-  nav(`/review/${bookingId}`)
+  // setBookingId(bookingId)
+  // nav(`/review/${bookingId}`)
+  setBooking(true)
   console.log(bookingId,'selectedbooking');
 } 
 
 const cancelBooking = async (bookingId) => {
+
     try {
       const response = await fetch(`http://localhost:8000/rentals/profile/bookings/${bookingId}/cancel`, {
         method: 'DELETE',
@@ -56,8 +75,9 @@ const cancelBooking = async (bookingId) => {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.ok) {
+        // Booking canceled successfully
         listBookings();
       } else {
         console.error('Failed to cancel booking');
@@ -65,11 +85,34 @@ const cancelBooking = async (bookingId) => {
     } catch (error) {
       console.error('Error canceling booking:', error);
     }
-  };  
+};
+
   const [bookingId, setBookingId] = useState('')
   console.log(bookingId);
-  function handleOpen(bookingId){
-    setModalOpen(true)
+  // function handleOpen(bookingId,bookingStatus){
+  //   if (bookingStatus === 'Rented' || bookingStatus === 'Returned' || bookingStatus === 'Cancelled') {
+  //     toast.error('Cannot cancel the booking because of its status.');
+  //   } else {
+  //     setModalOpen(true)
+  //     setBookingId(bookingId)
+  //   }
+  // }
+
+  function handleOpen(bookingId,bookingStatus){
+    if (bookingStatus === 'Rented'){
+      toast.error('Cannot cancel once you rent the car')
+    }else if(bookingStatus === 'Returned'){
+      toast.error('You have already returned the car')
+    }else if( bookingStatus === 'Cancelled') {
+      toast.error("Already cancelled, you'll recieve the amount back");
+    } else {
+      setModalOpen(true)
+      setBookingId(bookingId)
+    }
+  }
+
+  function handleReview(bookingId){
+    setBooking(true)
     setBookingId(bookingId)
   }
 
@@ -77,6 +120,7 @@ const cancelBooking = async (bookingId) => {
     <>
 
       <section className="container px-4 mx-auto mt-10">
+        <Toaster/>
         <div className="relative mt-4 md:mt- w-1/2">
           {/* Your search input code here */}
         </div>
@@ -185,11 +229,11 @@ const cancelBooking = async (bookingId) => {
                           <td className="text-sm whitespace-nowrap h-20 w-20">
                             <div className="flex items-center justify-center gap-x-6">
                               {booking.booking_status == 'Rented' || booking.booking_status == 'Returned'  ? (
-                              <button  onClick={()=>handlButton(booking.id)} > Add </button>
+                              <button 
+                              className="px-2 py-1 text-sm font-medium text-white bg-green-200 rounded-full hover:bg-blue-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
+                              onClick={()=>handleReview(booking.id)} > Add </button>
                               ):(
-                                <p > You must have rented <br />
-                                 or returned the car <br />
-                                  to add a review  </p>
+                                <p >You cant make a <br /> review about this car  </p>
                               )}
                             </div>
                           </td>
@@ -197,7 +241,7 @@ const cancelBooking = async (bookingId) => {
                             <div className="flex items-center justify-center gap-x-6">
                             {/* <button onClick={()=>cancelBooking(booking.id)} className=" text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"> */}
                             <button
-                             onClick={()=>handleOpen(booking.id)}
+                             onClick={()=>handleOpen(booking.id,booking.booking_status)}
                              className=" text-gray-500  transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -240,6 +284,15 @@ const cancelBooking = async (bookingId) => {
               booking = {filteredBookings}
               cancelBooking={cancelBooking}
               />
+
+ <ReviewModal
+ bookingId={bookingId}
+ open = {booking}
+ handler={()=>setBooking(false)}
+
+  
+
+/>
       
     </>
   );

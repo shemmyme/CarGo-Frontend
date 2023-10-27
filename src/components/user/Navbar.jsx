@@ -46,12 +46,12 @@ function Navigation() {
               Cars
             </a>
 
-            <a
+            {/* <a
               className="hover:cursor-pointer my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
               onClick={() => navigate("/offers")}
             >
               Offers
-            </a>
+            </a> */}
           </div>
           <div className="flex items-center space-x-1">
             <a
@@ -61,7 +61,7 @@ function Navigation() {
               Account
             </a>
 
-            <a className="hover:cursor-pointer relative text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-300">
+            {/* <a className="hover:cursor-pointer relative text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-300">
               <div className="w-8 rounded-full">
                 <img
                   src="photo-1534528741775-53994a69daeb.jpg"
@@ -69,7 +69,7 @@ function Navigation() {
                   onClick={() => navigate("/profile")}
                 />
               </div>
-            </a>
+            </a> */}
           </div>
           <div>
             {localResponse ? (

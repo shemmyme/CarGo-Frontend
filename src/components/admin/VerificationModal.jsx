@@ -31,7 +31,7 @@ export default function Modal({ showModal, onClose, selectedUser,licenseFront,li
                   </button>
                 </div>
                 {/*body*/}
-                <div className="relative p-6 flex-auto">
+                <div className="relative p-6 max-w-sm">
                 <img src={`${licenseFront}`} alt="" />
                 <img src={`${licenseBack}`} alt="" className="mt-3" />
                 <img src={`${livePhoto}`} alt="" className="mt-3" />

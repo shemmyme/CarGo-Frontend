@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import axios from "axios";
-import { BACKEND_BASE_URL, wsApiUrl } from '../../utils/config';
 import jwtDecode from 'jwt-decode';
+import { BACKEND_BASE_URL,wsApiUrl } from '../../utils/Config';
 
 function UserChat() {
 

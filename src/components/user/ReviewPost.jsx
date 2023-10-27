@@ -3,6 +3,8 @@ import axios from 'axios';
 import { BACKEND_BASE_URL } from '../../utils/Config';
 import jwtDecode from 'jwt-decode';
 import { useParams } from 'react-router-dom';
+import StarRate from './StarRate';
+import { toast, Toaster } from "react-hot-toast";
 
 const ReviewForm = () => {
   const {bookingId} = useParams()
@@ -43,7 +45,7 @@ const ReviewForm = () => {
       .post(BACKEND_BASE_URL + '/rentals/reviews/create', reviewData)
       .then((response) => {
         // Handle success
-        console.log('Review posted successfully');
+        toast.success('Review succesfully added')
       })
       .catch((error) => {
         // Handle error
@@ -51,35 +53,29 @@ const ReviewForm = () => {
       });
   };
 
-  return (
-    <div>
-      {/* <h2>Select a Booking to Review:</h2>
-      <select onChange={handleBookingSelect}>
-        <option value="">Select a Booking</option>
-        {filteredBookings.map((booking) => (
-          <option key={booking.id} value={booking.id}>
-            {booking.id} - {booking.car.product_name}
-          </option>
-        ))}
-      </select> */}
-       <h2>Review Booking ID: {bookings.id}</h2>
-      {bookings ? (
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Comment:</label>
-            <textarea value={comment} onChange={(e) => setComment(e.target.value)} />
-          </div>
-          <div>
-            <label>Rating:</label>
-            <input type="number" value={rating} onChange={(e) => setRating(e.target.value)} />
-          </div>
-          <button type="submit">Submit Review</button>
-        </form>
-      ) : (
-        <p>Loading booking details...</p>
-      )}
-    </div>
-  )
+
+    return (
+      <div>
+        <Toaster position="top-center" reverseOrder={false}></Toaster>
+        <h2>Review Booking ID: {bookings.id}</h2>
+        {bookings ? (
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label>Comment:</label>
+              <textarea value={comment} onChange={(e) => setComment(e.target.value)} />
+            </div>
+            <div>
+              <label>Rating:</label>
+              <StarRate rating={rating} /> {/* Use the StarRating component here */}
+              <input type="number" value={rating} onChange={(e) => setRating(e.target.value)} />
+            </div>
+            <button type="submit">Submit Review</button>
+          </form>
+        ) : (
+          <p>Loading booking details...</p>
+        )}
+      </div>
+    );
 };
 
 export default ReviewForm;

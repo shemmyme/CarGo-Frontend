@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getLocal } from "../../helpers/Auth";
 import { Link } from "react-router-dom";
+import jwtDecode from "jwt-decode";
+import { BACKEND_BASE_URL } from "../../utils/Config";
 
 const Profilebar = () => {
+  const[user,setUser] = useState([])
   const navigate = useNavigate();
-  const localResponse = getLocal('authToken');
+  const token = getLocal('authToken');
+  const decoded = jwtDecode(token)
+
+  useEffect(() => {
+    fetch(`http://localhost:8000/api/profile/${decoded.user_id}/`)
+      .then((response) => response.json())
+      .then((data) => {
+        setUser(data);
+        console.log(data,'indoooooooo nokkkkkkk');
+      })
+      .catch((error) => {
+        console.log("error fetch", error);
+      });
+  }, []);
+  
 
   const handleclick = () => {
     localStorage.removeItem('authToken');
@@ -20,7 +37,7 @@ const Profilebar = () => {
             <div className="w-24 h-24 rounded-full object-cover">
               <div className="w-full h-full">
                 <img
-                  src="https://thumbor.forbes.com/thumbor/fit-in/x/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg"
+                  src={BACKEND_BASE_URL + user.profile_img}
                   alt="..."
                   className="w-24 h-24 rounded-full object-cover"
                   width="96"
@@ -29,7 +46,7 @@ const Profilebar = () => {
               </div>
             </div>
           </div>
-          <p className="mt-3 font-medium">shameem muhammed shareef</p>
+          <p className="mt-3 font-medium">{user.username}</p>
           <p className="mt-1 text-sm text-gray-500">9108281180036</p>
         </div>
         <div>
@@ -101,7 +118,7 @@ const Profilebar = () => {
             >
               {/* ... Your SVG Path Here ... */}
             </svg>
-            {localResponse ? (
+            {token ? (
               <button onClick={() => handleclick()}>Logout</button>
             ) : (
               <button>Login</button>

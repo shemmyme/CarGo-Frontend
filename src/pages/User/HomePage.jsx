@@ -4,6 +4,7 @@ import Main from '../../components/user/Main'
 import ReviewList from '../../components/user/ReviewList'
 import Faq from '../../components/user/Faq'
 import Footer from '../../components/user/Footer'
+import Offers from "../../components/user/Offers";
 
 
  
@@ -16,6 +17,7 @@ return (
       <Banner/>
       <Main/>
       <ReviewList/>
+      <Offers/>
       <Faq/>
       <Footer/>
     </div>

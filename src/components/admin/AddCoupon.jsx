@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_BASE_URL } from "../../utils/Config";
+import {toast,Toaster} from 'react-hot-toast'
 
 function AddCoupons() {
   const initialCoupon = {
@@ -38,9 +39,13 @@ function AddCoupons() {
       );
 
       if (response.status === 201) {
-        alert("Coupon added successfully!");
-        navigate("/admin/coupon/");
+        toast.success('"Coupon added successfully')
+        setTimeout(()=>{
+          navigate("/admin/coupon/");
+        },1500)
         setCoupon(initialCoupon);
+      }else if (response.status == 208){
+        toast.error('Coupon with the same Code exists')
       } else {
         alert("Failed to add coupon.");
       }
@@ -51,6 +56,7 @@ function AddCoupons() {
 
   return (
     <div className="p-32 flex justify-center w-full">
+      <Toaster/>
       <form>
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">

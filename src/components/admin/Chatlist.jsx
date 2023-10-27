@@ -70,7 +70,7 @@ function Chatlist() {
                     className={`flex items-center rounded-xl px-3 mb-3 py-2 text-sm transition duration-150 ease-in-out  cursor-pointer focus:outline-none ${activeUserId === user.id ? ' bg-indigo-300' : 'bg-gray-100 text-gray-600 border-black'
                         }`}
                 >
-                    <img className="object-cover w-10 h-10 rounded-full" src={BACKEND_BASE_URL + user.profile_img} alt="" />
+                    <img className="object-cover w-10 h-10 rounded-full" src={user.profile_img} alt="" />
                     <Link to={`/admin/chat/chatbox/${user.id}/`}>
                         <div className="w-full pb-2">
                             <div className="flex justify-between">

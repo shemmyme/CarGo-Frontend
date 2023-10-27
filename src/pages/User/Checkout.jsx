@@ -151,6 +151,7 @@ const Checkout = () => {
     setShowPayPalButton(true)
   };
 
+  
   if (!car) {
     return <div>Loading...</div>; // Render a loading indicator while fetching data
   }
@@ -158,23 +159,28 @@ const Checkout = () => {
   const complete_payment = (payment_id,order_id,signature) => {
   
     axios
-    .post(BACKEND_BASE_URL+`/rentals/order/complete/${decoded.user_id}/`, {
+    .post(BACKEND_BASE_URL + `/rentals/order/complete/${decoded.user_id}/`, {
       "payment_id": payment_id,
       "order_id": order_id,
       "signature": signature,
-      "amount": amount,
+      "amount": grandTotal,
       "currency": 'INR',
-    }, {
-      
     })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
-  };
+    .then((response) => {
 
+      if (response.status === 201) {
+        handleCheckout();
+      } else if (response.status === 400) {
+        // Slot is not available, display an error message
+        // You might use a toast or an alert to show the message to the user
+        // For example:
+        alert('Slot not available');
+      }
+    })
+    .catch((error) => {
+      console.log(error.response);
+    });
+};
   const razorpayPayment = (payment_id,order_id,signature) => {
   
     axios
@@ -182,20 +188,22 @@ const Checkout = () => {
       // "payment_id": payment_id,
       // "order_id": order_id,
       // "signature": signature,
-      "amount": amount,
+      "amount": grandTotal,
       "currency": 'INR',
+      "start_date": startDate, 
+      "end_date": endDate,
+      "car": car.id,
+
     }, {
       
     })
-      .then(function (response) {
-        console.log(response.data.data);
+    .then(function (response) {
         const order_id = response.data.data.id;
 
         const options = {
           key: 'rzp_test_BBvPci4QCLpdZs',
           name: 'Cargo',
           description: 'To GO payment',
-          // image: logoImage,
           order_id: order_id,
           handler: function (response) {
             complete_payment(
@@ -221,20 +229,22 @@ const Checkout = () => {
 
         rzp1.on('payment.failed', function (response) {
           alert(response.error.code);
-          alert(response.error.description);
-          alert(response.error.source);
-          alert(response.error.step);
-          alert(response.error.reason);
-          alert(response.error.metadata.order_id);
-          alert(response.error.metadata.payment_id);
+          // alert(response.error.description);
+          // alert(response.error.source);
+          // alert(response.error.step);
+          // alert(response.error.reason);
+          // alert(response.error.metadata.order_id);
+          // alert(response.error.metadata.payment_id);
         });
 
         rzp1.open();
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+      
+    })
+    .catch(function (error) {
+      toast.error(error.response.data.message)
+      console.log(error);
+    });
+};
 
 
 

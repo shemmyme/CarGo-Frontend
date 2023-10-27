@@ -12,7 +12,8 @@ import axios from 'axios';
 import { BACKEND_BASE_URL } from '../../utils/Config';
 import './CarDetails.css';  
 import jwtDecode from "jwt-decode";
-import ReviewForm from './ReviewPost';
+import StarRate from './StarRate';
+import Spinner from './Spinner';
 
 
 
@@ -26,75 +27,76 @@ const CarDetails = () => {
   const [reviews,setReviews] = useState('')
   const [selectedCarId, setSelectedCarId] = useState(null);
   const token = localStorage.getItem("authToken");
-
-
-  const nav = useNavigate();
+  const decoded =  token ? jwtDecode(token) : '';
   
   
+    const nav = useNavigate();
   
-  useEffect(() => {
-    const fetchCarDetails = async () => {
-      try {
-        const response = await axios.get(
-          BACKEND_BASE_URL + `/api/cars/${carId}/`
-        );
-        setCar(response.data);
-        setCurrentImage(response.data.image_1)
-        setSelectedCarId(response.data.id)
-      } catch (error) {
-        console.error('Error fetching car details:', error);
-      }
-    };
+    useEffect(() => {
+      const fetchCarDetails = async () => {
+        try {
+          const response = await axios.get(
+            BACKEND_BASE_URL + `/api/cars/${carId}/`
+          );
+          setCar(response.data);
+          setCurrentImage(response.data.image_1);
+          setSelectedCarId(response.data.id);
+        } catch (error) {
+          console.error('Error fetching car details:', error);
+        }
+      };
+  
+      fetchCarDetails();
+    }, [carId]);
 
-    fetchCarDetails();
-    console.log(car,'car');
-    console.log(selectedCarId,'carid');;
-
+    useEffect(() => {
+      fetch(`http://localhost:8000/api/profile/${decoded.user_id}/`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data){
+            setUserLoggedIn(true)
+          }
+          if (data.is_verified) {
+            setUserVerified(true);
+          }
+          console.log(data, 'indoooooooo nokkkkkkk');
+        })
+        .catch((error) => {
+          console.log("error fetch", error);
+        });
+    }, []);
     
-
-   
-
-
-if (token) {
-  setUserLoggedIn(true);
-  const decoded = jwtDecode(token);
-  if (decoded && decoded.is_verified) {
-    setUserVerified(true);
-  } else {
-    setUserVerified(false);
-  }
-  console.log(decoded,'nokkkye');
-} else {
-  setUserLoggedIn(false);
-  setUserVerified(false);
-}
-  }, [carId]);
-
-
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        const response = await axios.get(
-          BACKEND_BASE_URL + `/rentals/reviews/list/${selectedCarId}`);
-        setReviews(response.data);
-      } catch (error) {
-        console.error('Error getting reviews list', error);
-      }
+  
+    useEffect(() => {
+      const fetchReviews = async () => {
+        try {
+          const response = await axios.get(
+            BACKEND_BASE_URL + `/rentals/reviews/list/${selectedCarId}`
+          );
+          setReviews(response.data);
+        } catch (error) {
+          console.error('Error getting reviews list', error);
+        }
+      };
+  
+      fetchReviews();
+    }, [selectedCarId]);
+  
+    const handleImageClick = (imageUrl) => {
+      setCurrentImage(imageUrl);
     };
   
-    fetchReviews();
-  }, [selectedCarId]);
-  
-
-  
-
-  const handleImageClick = (imageUrl) => {
-    setCurrentImage(imageUrl);
-  };
-
-  if (!car) {
-    return <div>Loading...</div>;
-  }
+    if (!car) {
+      return <div className="h-screen flex items-center justify-center">
+      <Spinner color="text-primary" />
+      <Spinner color="text-secondary" />
+      <Spinner color="text-success" />
+      <Spinner color="text-danger" />
+      <Spinner color="text-warning" />
+      <Spinner color="text-info" />
+      <Spinner color="text-neutral-100" />
+    </div>
+    }
 
   return (
     
@@ -200,16 +202,16 @@ if (token) {
         <div key={review.id} className="max-w-3xl">
           <div className="m-4 block rounded-lg bg-white p-6 shadow-lg dark:bg-neutral-800 dark:shadow-black/20">
             <div className="md:flex md:flex-row">
-     
+                  
               <div  className="md:ml-6">
                 <p className="mb-6 font-light text-neutral-500 dark:text-neutral-300">
                  {review.comment}
                 </p>
                 <p className="mb-2 text-xl font-semibold text-neutral-800 dark:text-neutral-200">
-                  {review.rating}
+                <StarRate rating={review.rating} size="text-3xl" /> 
                 </p>
-                <p className="mb-0 font-semibold text-neutral-500 dark:text-neutral-400">
-                  
+                <p className="mb-0 text-lg font-medium text-gray-900 dark:text-white">
+                {review.user.id === decoded.id ? "By Yourself" : review.user.username}
                 </p>
               </div>
             </div>

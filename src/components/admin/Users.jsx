@@ -29,6 +29,8 @@ const Users = () => {
 
         if (response.status ===200) {
           alert("User has been verified.");
+          closeUserModal()
+          
         } else {
           alert("Failed to verify user.");
         }

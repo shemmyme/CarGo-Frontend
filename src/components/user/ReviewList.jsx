@@ -1,49 +1,91 @@
-import React from "react";
+import axios from "axios";
+import React, { useState,useEffect } from "react";
 import { Link } from "react-router-dom";
+import { BACKEND_BASE_URL } from "../../utils/Config";
+import StarRate from "./StarRate";
 
-const ReviewCard = ({ car, review, rating }) => {
-  const starIcons = Array.from({ length: rating }).map((_, index) => (
-    <svg
-      key={index}
-      className="w-4 h-4 fill-current text-yellow-500"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 20 20"
-    >
-      <path d="M10 0l2.36 6.27 6.27.63-4.89 4.56 1.46 6.18L10 14.9l-6.19 3.64 1.46-6.18L1.37 7.9l6.27-.63L10 0z" />
-    </svg>
-  ));
 
-  return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-2">{car}</h2>
-      <p className="text-gray-600 mb-4">{review}</p>
-      <div className="flex items-center">
-        {starIcons}
-        <span className="text-gray-600 ml-2">{rating} / 5</span>
-      </div>
-    </div>
-  );
-};
 
 const ReviewList = () => {
-  const dummyReviews = [
-    { car: "Suzuki Frox", review: "Great car, loved the features!", rating: 4 },
-    { car: "Vittara Brezza", review: "Comfortable and stylish.", rating: 5 },
-    { car: "Toyota Fortuner", review: "Powerful engine and smooth ride.", rating: 4 },
-    { car: "Mahindra Thar", review: "Best Offroad and gearing.", rating: 4.5 },
-    // Add more dummy reviews
-  ];
+  const [reviews, setReviews] = useState([])
 
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await axios.get(
+          BACKEND_BASE_URL + '/rentals/reviews/list/');
+        setReviews(response.data);
+      } catch (error) {
+        console.error('Error getting reviews list', error);
+      }
+    };
+  
+    fetchReviews();
+  },[] );
+
+  // Function to shuffle an array
+  const shuffleArray = (array) => {
+    const shuffledArray = [...array];
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    }
+    return shuffledArray;
+  };
+
+  // Shuffle and select the first 3 reviews
+  const randomReviews = shuffleArray(reviews).slice(0, 3);
+
+  console.log(reviews)
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-semibold mb-6">Customer Reviews</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        {dummyReviews.map((review, index) => (
-          <ReviewCard key={index} {...review} />
-        ))}
+    <div>
+    <div className="mx-auto text-center md:max-w-xl lg:max-w-3xl">
+      <h3 className="mb-6 text-3xl font-bold text-neutral-800 dark:text-neutral-200">
+        Testimonials
+      </h3>
+      <p className="mb-6 pb-2 md:mb-12 md:pb-0">
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, error
+        amet numquam iure provident voluptate esse quasi, veritatis totam
+        voluptas nostrum quisquam eum porro a pariatur veniam.
+      </p>
+    </div>
+    <div className="grid gap-6 text-center md:grid-cols-3 lg:gap-12">
+
+{  randomReviews.map((review)=>(
+      <div className="mb-12 md:mb-0">
+        <div className="mb-6 flex justify-center">
+          <img
+            src={review.user.profile_img}
+            className="w-32 rounded-full shadow-lg dark:shadow-black/30"
+            alt="Lisa Cudrow"
+          />
+        </div>
+        <h5 className="mb-4 text-xl font-semibold">{review.user.username}</h5>
+    
+        <p className="mb-4">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            className="inline-block h-7 w-7 pr-2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M13 14.725c0-5.141 3.892-10.519 10-11.725l.984 2.126c-2.215.835-4.163 3.742-4.38 5.746 2.491.392 4.396 2.547 4.396 5.149 0 3.182-2.584 4.979-5.199 4.979-3.015 0-5.801-2.305-5.801-6.275zm-13 0c0-5.141 3.892-10.519 10-11.725l.984 2.126c-2.215.835-4.163 3.742-4.38 5.746 2.491.392 4.396 2.547 4.396 5.149 0 3.182-2.584 4.979-5.199 4.979-3.015 0-5.801-2.305-5.801-6.275z"
+            />
+          </svg>
+{review.comment}
+        </p>
+        <ul className="mb-0 flex items-center justify-center">
+          <li>
+           <StarRate rating={review.rating} size="text-3xl"/>
+          </li>
+        </ul>
       </div>
+))}   
+    </div>
     </div>
   );
+   
 };
 
 export default ReviewList;

@@ -1,9 +1,9 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import LiveCam from "./LiveCam";
 import jwtDecode from "jwt-decode";
-import { BACKEND_BASE_URL } from "../../utils/config";
+import { BACKEND_BASE_URL } from "../../utils/Config";
 
 const Profilebox = () => {
   const token = localStorage.getItem("authToken");
@@ -94,7 +94,7 @@ const Profilebox = () => {
             <div className="avatar md:ml-6  ml-36 mt-3 mb-3  ">
               <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                 <img
-                  src="https://thumbor.forbes.com/thumbor/fit-in/x/https://www.forbes.com/advisor/in/wp-content/uploads/2022/03/monkey-g412399084_1280.jpg"
+                  src={BACKEND_BASE_URL + user.profile_img}
                   className="rounded-full w-24 h-24 "
                   alt="profile"
                 />

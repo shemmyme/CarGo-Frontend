@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_BASE_URL } from "../../utils/Config";
+import Spinner from "./Spinner";
+
 function CarsList() {
     const navigate = useNavigate();
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const [search, setSearch] = useState("");
-    const [start_date, setStartDate] = useState(searchParams.get("start_date") || ""); // State for start_date
-    const [end_date, setEndDate] = useState(searchParams.get("end_date") || ""); // State for end_date
+    const [start_date, setStartDate] = useState(searchParams.get("start_date") || ""); 
+    const [end_date, setEndDate] = useState(searchParams.get("end_date") || ""); 
     const [currentPage, setCurrentPage] = useState(1);
-    const carsPerPage = 1; // Number of cars to display per page
+    const carsPerPage = 3;
     const [cars, setCars] = useState([]);
   
     useEffect(() => {
@@ -55,66 +57,81 @@ function CarsList() {
       const endIndex = startIndex + carsPerPage;
       const carsToDisplay = cars.slice(startIndex, endIndex);
 
+      if (!carsToDisplay) {
+        return <div className="h-screen flex items-center justify-center">
+        <Spinner color="text-primary" />
+        <Spinner color="text-secondary" />
+        <Spinner color="text-success" />
+        <Spinner color="text-danger" />
+        <Spinner color="text-warning" />
+        <Spinner color="text-info" />
+        <Spinner color="text-neutral-100" />
+      </div>
+      }
+
   return (
     <>
-      <section className="w-full ">
-        <div className="mx-3 my-3">
-          <div className="relative text-gray-600">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-2">
-              <svg
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                className="w-6 h-6 text-gray-300"
-              >
-                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-              </svg>
-            </span>
-            <input
-              type="search"
-              className="block w-full py-2 pl-10 bg-gray-100 rounded-xl outline-none"
-              name="search"
-              placeholder="Search"
-              value={search}
-              onChange={handleSearch}
-            />
-             <div className="mx-3 my-3">
-                    <div className="relative text-gray-600">
-                        <input
-                            type="date"
-                            className="block w-half py-2 pl-10 bg-gray-100 rounded-xl outline-none"
-                            name="start_date"
-                            placeholder="Start Date"
-                            value={start_date}
-                            min={currentDate}
-                            onChange={(e) => setStartDate(e.target.value)} // Update start_date state
-                        />
-                    </div>
-                </div>
-                <div className="mx-3 my-3">
-                    <div className="relative text-gray-600">
-                        <input
-                            type="date"
-                            className="block w-half py-2 pl-10 bg-gray-100 rounded-xl outline-none"
-                            name="end_date"
-                            placeholder="End Date"
-                            value={end_date}
-                            min = {start_date}
-                            onChange={(e) => setEndDate(e.target.value)} // Update end_date state
-                        />
-                    </div>
-                </div>
-          </div>
-          
-        </div>
+      <section className="w-full">
+  <div className="flex">
+    {/* Left Half: Search Box */}
+    <div className="w-2/3 p-3">
+      <div className="relative text-gray-600">
+        <span className="absolute inset-y-0 left-0 flex items-center pl-2">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+            className="w-6 h-6 text-gray-300"
+          >
+            <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+        </span>
+        <input
+          type="search"
+          className="block w-full py-2 pl-10 bg-gray-100 rounded-xl outline-none"
+          name="search"
+          placeholder="Search"
+          value={search}
+          onChange={handleSearch}
+        />
+      </div>
+    </div>
+
+    {/* Right Half: Date Inputs */}
+    <div className="w-half p-3 grid grid-cols-2 gap-3">
+      <div className="relative text-gray-600">
+        <input
+          type="date"
+          className="block py-2 pl-10 bg-gray-100 rounded-xl outline-none"
+          name="start_date"
+          placeholder="Start Date"
+          value={start_date}
+          min={currentDate}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+      </div>
+
+      <div className="relative text-gray-600">
+        <input
+          type="date"
+          className="block py-2 pl-10 bg-gray-100 rounded-xl outline-none"
+          name="end_date"
+          placeholder="End Date"
+          value={end_date}
+          min={start_date}
+          onChange={(e) => setEndDate(e.target.value)}
+        />
+      </div>
+    </div>
+  </div>
         
-        {cars.length === 0 ? (
+        {carsToDisplay.length === 0 ? (
           <p className="text-center">No cars found</p>
         ) : (
-          cars.map((car) => (
+          carsToDisplay.map((car) => (
             <div key={car.id} className="m-6 lg:px-32 mt-10">
               <a
                 href=""
