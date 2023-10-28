@@ -5,6 +5,8 @@ import {DialogCustomAnimation} from './CancelModal'
 import { button } from '@material-tailwind/react';
 import { ReviewModal } from './ReviewModal';
 import {toast,Toaster} from 'react-hot-toast';
+import { BACKEND_BASE_URL } from '../../utils/Config';
+
 
 
 const Booking = () => {
@@ -20,7 +22,7 @@ const Booking = () => {
 
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/profile/${decoded.user_id}/`)
+    fetch(BACKEND_BASE_URL +`/api/profile/${decoded.user_id}/`)
       .then((response) => response.json())
       .then((data) => {
         setUser(data);
@@ -36,7 +38,7 @@ const Booking = () => {
   // };
 
   const listBookings = () =>{
-    fetch(`http://localhost:8000/rentals/profile/bookings`)
+    fetch(BACKEND_BASE_URL +`/rentals/profile/bookings`)
       .then((response) => response.json())
       .then((data) => {
         // Filter bookings to include only the ones belonging to the logged-in user
@@ -67,7 +69,7 @@ function handlButton(bookingId){
 const cancelBooking = async (bookingId) => {
 
     try {
-      const response = await fetch(`http://localhost:8000/rentals/profile/bookings/${bookingId}/cancel`, {
+      const response = await fetch(BACKEND_BASE_URL +`/rentals/profile/bookings/${bookingId}/cancel`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

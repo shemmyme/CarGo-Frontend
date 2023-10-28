@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/admin/Navbar';
+import { BACKEND_BASE_URL } from '../../utils/Config';
 
 const Booking = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const Booking = () => {
 
  
   const listBookings = () => {
-    fetch(`http://localhost:8000/rentals/profile/bookings`)
+    fetch(BACKEND_BASE_URL + `/rentals/profile/bookings`)
       .then((response) => response.json())
       .then((data) => {
         // Sort data by created_at in descending order

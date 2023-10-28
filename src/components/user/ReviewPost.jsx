@@ -14,7 +14,7 @@ const ReviewForm = () => {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/rentals/profile/bookings/${bookingId}`)
+    fetch(BACKEND_BASE_URL + `/rentals/profile/bookings/${bookingId}`)
       .then((response) => response.json())
       .then((data) => {
         setBookings(data);
