@@ -42,8 +42,6 @@ const Booking = () => {
         // Filter bookings to include only the ones belonging to the logged-in user
         const filteredBookings = data.filter((booking) => booking.user.id === decoded.user_id);
 
-        console.log('Original created_at values:', filteredBookings.map(booking => booking.created_date));
-
         filteredBookings.sort((a, b) => {
           // Convert creation dates to Date objects for comparison
           const dateA = new Date(a.created_date);

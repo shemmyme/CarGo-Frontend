@@ -22,7 +22,6 @@ const Profilebox = () => {
       .then((response) => response.json())
       .then((data) => {
         setUser(data);
-        console.log(data,'indoooooooo nokkkkkkk');
       })
       .catch((error) => {
         console.log("error fetch", error);
@@ -35,7 +34,6 @@ const Profilebox = () => {
       ...user,
       licenseFront: file,
     });
-    console.log(file,'filelelelelelleleleleel');
   };
 
   const handleLicenseBackChange = (e) => {
@@ -44,7 +42,6 @@ const Profilebox = () => {
       ...user,
       licenseBack: file,
     });
-    console.log(file,'backckckckckckckcck file');
   };
 
   const nav = useNavigate();
