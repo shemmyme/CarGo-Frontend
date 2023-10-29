@@ -41,7 +41,7 @@ const Checkout = () => {
 
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/profile/${decoded.user_id}/`)
+    fetch(BACKEND_BASE_URL + `/api/profile/${decoded.user_id}/`)
       .then((response) => response.json())
       .then((data) => {
         setUser(data);
