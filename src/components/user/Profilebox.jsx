@@ -237,13 +237,12 @@ const Profilebox = () => {
           </div>
           </form>
           <div>
-            {console.log( user.livePhoto)}
               {
                 
                 user.livePhoto ? 
                 <img
                 className="h-56 rounded-lg ml-10"
-                src={`http://127.0.0.1:8000${user.livePhoto}`}
+                src={BACKEND_BASE_URL +`${user.livePhoto}`}
                 alt="Hello"
               />
                 :

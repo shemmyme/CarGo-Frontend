@@ -107,6 +107,12 @@ const Checkout = () => {
   };
 
   const handleCheckout = async () => {
+    // Check if the 'car' object is defined
+    if (!car || !car.id) {
+      toast.error('Car information is missing');
+      return;
+    }
+
     // Check if the ending date is greater than or equal to the starting date
     if (new Date(endDate) < new Date(startDate)) {
       toast.error('Ending date must be equal to or later than the starting date');
@@ -127,6 +133,8 @@ const Checkout = () => {
           total_cost: grandTotal,
         }
       );
+      console.log(car,'car in post');
+      console.log(user,'user in post');
   
       if (response.status === 200) {
         setBookingStatus("success");
@@ -141,8 +149,10 @@ const Checkout = () => {
       setBookingStatus("error");
       console.log(
         carId,
-        startDate,
-        endDate,
+        car,
+        user,
+        car.id,
+        user.id,
         "Enthenkilu indaaaaaaaaaaaa data in post"
       );
     }

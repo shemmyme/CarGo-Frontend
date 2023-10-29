@@ -6,12 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 
 function Paypal({ grandTotal }) {
+  const navi = useNavigate()
   const [{ isPending }] = usePayPalScriptReducer();
   // const [paymentCompleted, setPaymentCompleted] = useState(false);
   // const navigate = useNavigate();
 
   const handlePaymentSuccess = async (details) => {
     console.log("Payment completed successfully:", details);
+
     if (details) {
         console.log(details,'detaaaaaails');
       try {
