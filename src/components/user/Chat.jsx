@@ -146,7 +146,7 @@ function UserChat() {
                             </svg>
                         </span>
                         <img
-                            src={BACKEND_BASE_URL + senderdetails?.profile_img}
+                            src={BACKEND_BASE_URL + recipientdetails?.profile_img}
                             alt="..."
                             className="w-10 sm:w-16 h-10 sm:h-16 rounded-full"
                         />
@@ -187,7 +187,7 @@ function UserChat() {
                                                 </div>
                                             </div>
                                             <img
-                                                src={BACKEND_BASE_URL + senderdetails?.profile_img}
+                                                src={BACKEND_BASE_URL + recipientdetails?.profile_img}
                                                 alt="My profile"
                                                 className="w-8 h-8 rounded-full order-1"
                                             />
@@ -207,7 +207,7 @@ function UserChat() {
                                                 </div>
                                             </div>
                                             <img
-                                                src={BACKEND_BASE_URL + recipientdetails?.profile_img}
+                                                src={BACKEND_BASE_URL + senderdetails?.profile_img}
                                                 className="w-8 h-8 rounded-full order-2"
                                             />
                                         </div>

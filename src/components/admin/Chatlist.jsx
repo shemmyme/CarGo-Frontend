@@ -1,23 +1,25 @@
 import axios  from 'axios';
 import React from 'react'
 import { useState,useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { BACKEND_BASE_URL } from '../../utils/Config';
 
 function Chatlist() {
+    const nav = useNavigate()
     const [recipientdet, setRecipientDet] = useState([]);
     const [activeUserId, setActiveUserId] = useState(null);
     const [searchQuery, setSearchQuery] = useState('');
 
     const setUserProfileDet = async () => {
         try {
-            const response = await axios.get(
-                `${BACKEND_BASE_URL}/admin/users/`
-            );
-            setRecipientDet(response.data);
-            console.log("Employee data:", response.data);
+          const response = await axios.get(`${BACKEND_BASE_URL}/admin/users/`);
+          const users = response.data;
+    
+          const filteredUsers = users.filter((user) => !user.is_admin);
+    
+          setRecipientDet(filteredUsers);
         } catch (error) {
-            console.error("Error fetching employee data:", error);
+          console.error('Error fetching employee data:', error);
         }
     };
 
@@ -71,13 +73,15 @@ function Chatlist() {
                         }`}
                 >
                     <img className="object-cover w-10 h-10 rounded-full" src={user.profile_img} alt="" />
-                    <Link to={`/admin/chat/chatbox/${user.id}/`}>
+                   
                         <div className="w-full pb-2">
                             <div className="flex justify-between">
+                                <button onClick={()=> nav(`/admin/chat/chatbox/${user.id}/`)}>
                                 <span className="block ml-2 font-bold">{user.username}</span>
+                                </button>
                             </div>
                         </div>
-                    </Link>
+                    
                 </a>
             </li>
          ))} 

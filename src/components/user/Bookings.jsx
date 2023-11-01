@@ -239,7 +239,7 @@ const cancelBooking = async (bookingId) => {
                           </td>
                           <td className="text-sm whitespace-nowrap h-20 w-20">
                             <div className="flex items-center justify-center gap-x-6">
-                            {/* <button onClick={()=>cancelBooking(booking.id)} className=" text-gray-500 transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none"> */}
+                            {booking.booking_status == 'Pending' ?(
                             <button
                              onClick={()=>handleOpen(booking.id,booking.booking_status)}
                              className=" text-gray-500  transition-colors duration-200 dark:hover:text-red-500 dark:text-gray-300 hover:text-red-500 focus:outline-none">
@@ -258,6 +258,12 @@ const cancelBooking = async (bookingId) => {
                               />
                             </svg>
                           </button>
+                              ):(
+                                ''
+                              )}
+
+                              
+                          
                             </div>
                           </td>
                          

@@ -8,7 +8,7 @@ import { toast, Toaster } from "react-hot-toast";
 
 const ReviewForm = () => {
   const {bookingId} = useParams()
-  console.log(bookingId,'id');
+  console.log(bookingId,'iddddd');
   const [comment, setComment] = useState('');
   const [rating, setRating] = useState(0);
   const [bookings, setBookings] = useState([]);
@@ -24,12 +24,6 @@ const ReviewForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!bookingId) {
-      // Handle the case where no booking is selected
-      console.error('Please select a booking to post a review.');
-      return;
-    }
-
     const reviewData = {
       user: bookings.user,
       car: bookings.car,
@@ -37,8 +31,6 @@ const ReviewForm = () => {
       comment,
       rating,
     };
-    console.log(bookings,'ithokkke aan data');
-
 
 
     axios

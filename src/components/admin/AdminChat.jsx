@@ -136,7 +136,7 @@ useEffect(()=>{
             <div className="w-full">
                 <div className="relative flex items-center p-3 border-b border-gray-300">
                     <img className="object-cover w-10 h-10 rounded-full"
-                        src={BACKEND_BASE_URL + senderdetails?.profile_img} alt="username" />
+                        src={BACKEND_BASE_URL + recipientdetails?.profile_img} alt="username" />
                     <span className="block ml-2 font-bold text-gray-600">{recipientdetails?.username}</span>
                     <span className="absolute w-3 h-3 bg-green-600 rounded-full left-10 top-3">
                     </span>
@@ -151,7 +151,7 @@ useEffect(()=>{
                                         <li className="flex justify-start">
                                             <div>
                                                 <img
-                                                   src={BACKEND_BASE_URL + senderdetails?.profile_img}
+                                                   src={BACKEND_BASE_URL + recipientdetails?.profile_img}
                                                     alt="sender profile"
                                                     className="w-7 h-7 rounded-full order-1"
                                                 />
@@ -170,7 +170,7 @@ useEffect(()=>{
                                             </div>
                                             <div>
                                                 <img
-                                                    src={BACKEND_BASE_URL + recipientdetails?.profile_img}
+                                                    src={BACKEND_BASE_URL + senderdetails?.profile_img}
                                                     className="w-7 h-7 rounded-full order-2"
                                                 />
                                             </div>

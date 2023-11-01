@@ -4,10 +4,13 @@ import { useNavigate } from "react-router-dom";
 import LiveCam from "./LiveCam";
 import jwtDecode from "jwt-decode";
 import { BACKEND_BASE_URL } from "../../utils/Config";
+import {toast,Toaster} from "react-hot-toast";
 
 const Profilebox = () => {
   const token = localStorage.getItem("authToken");
   const decoded = jwtDecode(token);
+  const [username, setUsername] = useState('');
+  const [selectedProfilePhoto, setSelectedProfilePhoto] = useState(null);
 
   const initialUser = {
     licenseFront: null,
@@ -15,18 +18,32 @@ const Profilebox = () => {
   };
 
   const [user, setUser] = useState(initialUser);
-  const [photo, setPhoto] = useState([]);
+
+
   
   useEffect(() => {
     fetch(BACKEND_BASE_URL + `/api/profile/${decoded.user_id}/`)
       .then((response) => response.json())
       .then((data) => {
         setUser(data);
+        setUsername(data.username)
+        setSelectedProfilePhoto(BACKEND_BASE_URL + data.profile_img);
       })
       .catch((error) => {
         console.log("error fetch", error);
       });
   }, []);
+
+  const handleNameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleProfilePhotoChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedProfilePhoto(file);
+    // setSelectedProfilePhoto(URL.createObjectURL(file));
+  };
+  
 
   const handleLicenseFrontChange = (e) => {
     const file = e.target.files[0];
@@ -46,11 +63,43 @@ const Profilebox = () => {
 
   const nav = useNavigate();
 
+  // const handelEdit = async () => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append('username', username); // Add the updated username to the FormData
+  //     if (selectedProfilePhoto) {
+  //       formData.append('profile_img', selectedProfilePhoto); // Add the profile photo to FormData
+  //     }
+
+  //     const response = await axios.patch(
+  //       `${BACKEND_BASE_URL}/api/profileup/${decoded.user_id}/`,
+  //       formData,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       }
+  //     );
+
+  //     if (response.status === 201) {
+  //       toast.success('Your Profile is successully edited')
+  //     } else {
+  //       alert('Failed to update profile.');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error updating profile:', error);
+  //   }
+  // };
+
   const handleSubmit = async () => {
   try {
     const formData = new FormData();
     formData.append('licenseFront', user.licenseFront);
     formData.append('licenseBack', user.licenseBack);
+    formData.append("username", username); // Add the updated name to the FormData
+    if (selectedProfilePhoto) {
+      formData.append("profile_img", selectedProfilePhoto);
+    }
     console.log(token,'tokeeeeeeeeeeeeeeeeeeeeeen');
 
 
@@ -66,9 +115,10 @@ const Profilebox = () => {
     );
 
     if (response.status === 201) {
-      alert('License images uploaded successfully!');
+      toast.success('Chages saved successfully!');
+      window.location.reload();
     } else {
-      alert('Failed to upload license images.');
+      toast.error('Failed to save changes');
     }
     console.log('Response:', response.data);
   } catch (error) {
@@ -79,6 +129,7 @@ const Profilebox = () => {
   
   return (
     <div className="w-full border rounded-xl shadow-md h-fit m-5">
+      <Toaster/>
       <div style={{ opacity: 1 }}>
         <div className="section-container ">
           <div className="md:block hidden">
@@ -90,11 +141,22 @@ const Profilebox = () => {
           <div className="md:flex">
             <div className="avatar md:ml-6  ml-36 mt-3 mb-3  ">
               <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                <img
-                  src={BACKEND_BASE_URL + user.profile_img}
-                  className="rounded-full w-24 h-24 "
-                  alt="profile"
-                />
+              <label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleProfilePhotoChange}
+          style={{ display: 'none' }}
+        />
+        {selectedProfilePhoto ?(
+          <img
+          src={selectedProfilePhoto || BACKEND_BASE_URL + user.profile_img}
+          alt=""
+          className="w-24 h-24 rounded-full object-cover cursor-pointer"
+        />
+        ):''}
+        
+      </label>
               </div>
             </div>
             <div className="w-full bg-red- md:ml-24 pr-6">
@@ -112,8 +174,9 @@ const Profilebox = () => {
                     </label>
                     <div className="mt-2">
                       <input
-                        value={decoded.username}
+                        value={username}
                         type="text"
+                        onChange={handleNameChange}
                         name="first-name"
                         id="first-name"
                         autoComplete="given-name"
@@ -140,90 +203,72 @@ const Profilebox = () => {
                       />
                     </div>
                   </div>
+                  
                 </div>
               </div>
+              {/* <button  onClick={handelEdit}>Update Profile</button> */}
+
             </div>
           </div>
           <form onSubmit={handleSubmit}>
-          <div className="lg:flex  ">
-            <div className="lg:w-1/2 h-full pr-8 lg:pr-0  m-2 rounded-md">
-              {user.licenseFront?.length >= 1 && user.licenseFront ? (
-                <div class="w-full rounded overflow-hidden ">
-                <img
-                  class=" h-64 w-full lg:ml-10  rounded overflow-hidden shadow-lg"
-                  src={ BACKEND_BASE_URL+user.licenseFront}
-                  alt="License Front"
-                />
-              </div>
-              ) : (
+  <div className="text-center">
+    <p className="font-body pt-6 text-[25px]">Upload Your License to be able to Book a Car</p>
+  </div>
+  <div className="lg:flex">
+    <div className="lg:w-1/2 h-full pr-8 lg:pr-0 m-2 rounded-md">
+      <div className="w-full rounded overflow-hidden">
+        <label htmlFor="license-front" className="relative cursor-pointer rounded-md">
+          <img
+            className="h-64 w-full lg:ml-10 rounded overflow-hidden shadow-lg"
+            src={user.licenseFront ? `${BACKEND_BASE_URL}${user.licenseFront}` : ''}
+            alt="License Front"
+          />
+          <input
+            id="license-front"
+            name="license-front"
+            type="file"
+            onChange={handleLicenseFrontChange}
+            className="hidden"
+          />
+        </label>
+      </div>
+    </div>
+    <div className="lg:w-1/2 h-full pr-8 lg:pr-0 m-2 rounded-md">
+      <div className="w-full rounded overflow-hidden">
+        <label htmlFor="license-back" className="relative cursor-pointer rounded-md">
+          <img
+            className="h-64 w-full lg:ml-10 rounded overflow-hidden shadow-lg"
+            src={user.licenseBack ? `${BACKEND_BASE_URL}${user.licenseBack}` : ''}
+            alt="License Back"
+          />
+          <input
+            id="license-back"
+            name="license-back"
+            type="file"
+            onChange={handleLicenseBackChange}
+            className="hidden"
+          />
+        </label>
+      </div>
+    </div>
+  </div>
+</form>
+
+          <div className="justify-center  flex ">
+              {
                 
-                <div className="flex justify-center items-center rounded-lg border border-dashed border-gray-900/25 h-64">
-                <div className="text-center">
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="license-front"
-                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                    >
-                      <span>Upload License Front</span>
-                      <input
-                        id="license-front"
-                        name="license-front"
-                        type="file"
-                        onChange={handleLicenseFrontChange}
-                        className="sr-only"
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs leading-5 text-gray-600">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                </div>
-              </div>
-              )}
-            </div>
-            <div className="lg:w-1/2 h-full pr-8 lg:pr-0  m-2 rounded-md">
-
-            {user.licenseBack?.length >= 1 && user.licenseBack ? (
-               
-              <div class="w-full rounded overflow-hidden ">
+                user.livePhoto ? 
                 <img
-                  class=" h-64 w-full lg:ml-10  rounded overflow-hidden shadow-lg"
-                  src={ BACKEND_BASE_URL+user.licenseFront}
-                  alt="License Back"
-                />
-              </div>
-            ) : (
-             
-              <div className="flex justify-center items-center rounded-lg border border-dashed border-gray-900/25 h-64">
-                <div className="text-center">
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="license-back"
-                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                    >
-                      <span>Upload License Back</span>
-                      <input
-                        id="license-back"
-                        name="license-back"
-                        type="file"
-                        onChange={handleLicenseBackChange}
-                        className="sr-only"
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
-                  </div>
-                  <p className="text-xs leading-5 text-gray-600">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-          </div>
+                className="h-56 rounded-lg ml-10"
+                src={BACKEND_BASE_URL +`${user.livePhoto}`}
+                alt="Hello"
+              />
+                :
+                <LiveCam />
 
-
-          <div className="col-span-full flex py-2 justify-center">
+              }
+            </div>
+            <div className="col-span-full flex py-2 justify-center">
             <div>
             <button
               type="button"
@@ -235,21 +280,6 @@ const Profilebox = () => {
             </div>
             
           </div>
-          </form>
-          <div>
-              {
-                
-                user.livePhoto ? 
-                <img
-                className="h-56 rounded-lg ml-10"
-                src={BACKEND_BASE_URL +`${user.livePhoto}`}
-                alt="Hello"
-              />
-                :
-                <LiveCam  />
-
-              }
-            </div>
 
         </div>
       </div>

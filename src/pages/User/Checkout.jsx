@@ -3,7 +3,7 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment"; // Import the moment library
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { DialogCustomAnimation } from "./ConfirmModal";
 import Navbar from "../../components/user/Navbar";
 import jwtDecode from "jwt-decode";
@@ -22,6 +22,7 @@ const Checkout = () => {
     intent: "capture",
   };
 
+  const navi = useNavigate()
   const { carId } = useParams();
   const [car, setCar] = useState(null);
   const [totalCost, setTotalCost] = useState(0);
@@ -36,8 +37,8 @@ const Checkout = () => {
   const [user,setUser] = useState()
   const token = localStorage.getItem('authToken')
   const decoded = jwtDecode(token)  
-  const [amount, setAmount] = useState(500);
   const [Razorpay] = useRazorpay();
+  const [couponCode, setCouponCode] = useState('');
 
 
   useEffect(() => {
@@ -107,12 +108,6 @@ const Checkout = () => {
   };
 
   const handleCheckout = async () => {
-    // Check if the 'car' object is defined
-    if (!car || !car.id) {
-      toast.error('Car information is missing');
-      return;
-    }
-
     // Check if the ending date is greater than or equal to the starting date
     if (new Date(endDate) < new Date(startDate)) {
       toast.error('Ending date must be equal to or later than the starting date');
@@ -133,18 +128,17 @@ const Checkout = () => {
           total_cost: grandTotal,
         }
       );
-      console.log(car,'car in post');
-      console.log(user,'user in post');
   
       if (response.status === 200) {
         setBookingStatus("success");
         toast.success('Success');
+        navi('/success')
       } else {
         setBookingStatus("error");
       }
     } catch (error) {
       console.error("Error booking the car:", error);
-      toast.error('Slot is not available');
+      // toast.error('Slot is not available');
       console.error("Response data:", error.response);
       setBookingStatus("error");
       console.log(
@@ -163,7 +157,7 @@ const Checkout = () => {
 
   
   if (!car) {
-    return <div>Loading...</div>; // Render a loading indicator while fetching data
+    return <div>Loading...</div>; 
   }
 
   const complete_payment = (payment_id,order_id,signature) => {
@@ -181,9 +175,6 @@ const Checkout = () => {
       if (response.status === 201) {
         handleCheckout();
       } else if (response.status === 400) {
-        // Slot is not available, display an error message
-        // You might use a toast or an alert to show the message to the user
-        // For example:
         alert('Slot not available');
       }
     })
@@ -255,7 +246,27 @@ const Checkout = () => {
       console.log(error);
     });
 };
-
+const applyCoupon = () => {
+  axios.get(BACKEND_BASE_URL+ `/admin/validate-coupon/?code=${couponCode}`)
+    .then((response) => {
+      if (response.status === 200) {
+        const discountPercentage = response.data.discount_perc;
+        const discountedAmount = grandTotal * (1 - discountPercentage / 100);
+        setGrandTotal(discountedAmount);
+        toast.success('Coupon applied successfully');
+      } 
+    })
+    .catch((error) => {
+      if (error.response.status === 404) {
+        toast.error('Coupon code not found');
+      } else if (error.response.status === 400) {
+        toast.error('Invalid coupon code');
+      } else {
+        console.error('Error applying coupon:', error);
+        toast.error('Error applying coupon');
+      }
+    });
+};
 
 
   return (
@@ -395,6 +406,21 @@ const Checkout = () => {
               </div>
             </div>
           </div>
+          <div className="w-full mt-6 flex items-center justify-between p-2 border rounded-lg">
+  <input
+    type="text"
+    placeholder="Enter Coupon Code"
+    value={couponCode}
+    onChange={(e) => setCouponCode(e.target.value)}
+    className="w-full px-2 py-1 outline-none border-none"
+  />
+  <button
+    onClick={applyCoupon}
+    className="bg-pistachio  px-4 py-2 rounded-lg"
+  >
+    Apply
+  </button>
+</div>
           <div className="w-full flex items-center justify-between p-1 mt-6 rounded-xl shadow-sm shadow-black ">
             <div className="flex flex-col items-center justify-center p-10 ">
               <h2 className="font-bold ">{grandTotal}</h2>

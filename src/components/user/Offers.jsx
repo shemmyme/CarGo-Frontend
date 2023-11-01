@@ -26,16 +26,25 @@ function Offers() {
   const visibleCoupons = coupons.slice(0, 4); // Show up to 4 coupons
 
   return (
+    <div>
+      <div className="mx-auto text-center md:max-w-xl lg:max-w-3xl">
+      <h3 className="mb-4 text-3xl font-bold text-neutral-800 dark:text-neutral-200">
+        Offers
+      </h3>
+      <p className="mb-6 pb-2 md:mb-12 md:pb-0">
+        With these Offers, you can have the best discount for the car you would love
+      </p>
+    </div>
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center">
       {visibleCoupons.length === 0 ? (
-        <p>Nothing</p>
+        <p>No offers right now</p>
       ) : (
         visibleCoupons.map((coupon) => (
           <div
             key={coupon.id}
             className="block rounded-lg bg-white shadow-md dark:bg-neutral-700 p-4"
           >
-            <a href="#!">
+            <a>
               <img
                 className="rounded-t-lg w-full h-40 object-cover"
                 src={coupon.image_1}
@@ -62,6 +71,7 @@ function Offers() {
           </div>
         ))
       )}
+    </div>
     </div>
   );
 }

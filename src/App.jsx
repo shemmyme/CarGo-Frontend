@@ -30,6 +30,7 @@ import Bookings from './pages/Admin/Bookings'
 import ReviewForm from "./components/user/ReviewPost";
 import AddCoupons from "./components/admin/AddCoupon";
 import BookingList from "./pages/User/BookingList";
+import Success from './components/user/Success';
 function App() {
 
  
@@ -60,6 +61,9 @@ function App() {
             <Checkout/>
           </CarsProvider>
         }/>
+        
+
+        <Route path="/success" element={<Success/>} />
 
         <Route path="/chat" element={
           <ChatSection/>
