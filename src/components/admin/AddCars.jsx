@@ -2,8 +2,16 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_BASE_URL } from "../../utils/Config";
+import {Cloudinary} from "@cloudinary/url-gen";
+
 
 function AddCars() {
+  const cloudinaryConfig = new Cloudinary({
+    cloud_name: 'dom0eathi',
+    api_key: '692764988371741',
+  });
+
+
   const initialProduct = {
     coupon_code: "",
     discount_perc: "",
