@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import image from '../../../public/happy-family-unloading-luggage-from-the-car-for-royalty-free-image-1656517251.jpg';
-import image1 from '../../../public/banner2.jpg'
+// import image1 from '../../../public/banner2.jpg'
+import image1 from '../../../src/assets/banner2.jpg'
 import img from '../../../public/car5.png'
 import {useState} from 'react'
 
@@ -47,7 +47,7 @@ business ethics.</p>
 <div className='text-lg text-center -mt-5'>Find the right car now !</div>
 <div className='flex justify-center'> 
   <div>
-  <img className='h-16 w-16' src="/public/car5.png" alt="" />
+  <img className='h-16 w-16' src="/car5.png" alt="" />
   </div>
   </div>
           </div>
