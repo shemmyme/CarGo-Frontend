@@ -129,7 +129,15 @@ function CarsList() {
   </div>
         
         {carsToDisplay.length === 0 ? (
-          <p className="text-center">No cars found</p>
+          <div className="h-screen flex items-center justify-center">
+          <Spinner color="text-primary" />
+          <Spinner color="text-secondary" />
+          <Spinner color="text-success" />
+          <Spinner color="text-danger" />
+          <Spinner color="text-warning" />
+          <Spinner color="text-info" />
+          <Spinner color="text-neutral-100" />
+        </div>
         ) : (
           carsToDisplay.map((car) => (
             <div key={car.id} className="m-6 lg:px-32 mt-10">

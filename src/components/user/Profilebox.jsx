@@ -15,10 +15,11 @@ const Profilebox = () => {
   const initialUser = {
     licenseFront: null,
     licenseBack: null,
+    username: null,
+    email: null,
   };
 
   const [user, setUser] = useState(initialUser);
-
 
   
   useEffect(() => {
@@ -26,6 +27,7 @@ const Profilebox = () => {
       .then((response) => response.json())
       .then((data) => {
         setUser(data);
+        console.log(data,'datausernameeeeeeeee');
         setUsername(data.username)
         setSelectedProfilePhoto(BACKEND_BASE_URL + data.profile_img);
       })
@@ -63,45 +65,15 @@ const Profilebox = () => {
 
   const nav = useNavigate();
 
-  // const handelEdit = async () => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('username', username); // Add the updated username to the FormData
-  //     if (selectedProfilePhoto) {
-  //       formData.append('profile_img', selectedProfilePhoto); // Add the profile photo to FormData
-  //     }
-
-  //     const response = await axios.patch(
-  //       `${BACKEND_BASE_URL}/api/profileup/${decoded.user_id}/`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       }
-  //     );
-
-  //     if (response.status === 201) {
-  //       toast.success('Your Profile is successully edited')
-  //     } else {
-  //       alert('Failed to update profile.');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error updating profile:', error);
-  //   }
-  // };
-
   const handleSubmit = async () => {
   try {
     const formData = new FormData();
     formData.append('licenseFront', user.licenseFront);
     formData.append('licenseBack', user.licenseBack);
-    formData.append("username", username); // Add the updated name to the FormData
+    formData.append("username", username);
     if (selectedProfilePhoto) {
       formData.append("profile_img", selectedProfilePhoto);
     }
-    console.log(token,'tokeeeeeeeeeeeeeeeeeeeeeen');
-
 
     const response = await axios.patch(
       BACKEND_BASE_URL + `/api/profileup/${decoded.user_id}/`,
@@ -150,7 +122,7 @@ const Profilebox = () => {
         />
         {selectedProfilePhoto ?(
           <img
-          src={selectedProfilePhoto || BACKEND_BASE_URL + user.profile_img}
+          src={user.profile_img}
           alt=""
           className="w-24 h-24 rounded-full object-cover cursor-pointer"
         />

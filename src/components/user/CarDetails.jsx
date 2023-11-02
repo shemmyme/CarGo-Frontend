@@ -107,15 +107,15 @@ const CarDetails = () => {
             <CardContent>
               <div className="zoom-image">
                 <img
-                  src={BACKEND_BASE_URL + currentImage}
+                  src={currentImage}
                   alt="loading"
-                  className="img-fluid justify-center main-image" 
+                  className="img-fluid justify-center main-image " 
                 />
               </div>
               <Grid container spacing={2} mt={4}>
                 <Grid item xs={4}>
                   <img
-                    src={BACKEND_BASE_URL + car.image_1}
+                    src={car.image_1}
                     alt=""
                     className="img-fluid sub-images" 
                     onClick={() => handleImageClick(car.image_1)}
@@ -123,7 +123,7 @@ const CarDetails = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <img
-                    src={BACKEND_BASE_URL + car.image_2}
+                    src={car.image_2}
                     alt="loading"
                     className="img-fluid sub-images" 
                     onClick={() => handleImageClick(car.image_2)}
@@ -131,7 +131,7 @@ const CarDetails = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <img
-                    src={BACKEND_BASE_URL + car.image_3}
+                    src={car.image_3}
                     alt="loading"
                     className="img-fluid sub-images" 
                     onClick={() => handleImageClick(car.image_3)}

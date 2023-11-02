@@ -4,6 +4,7 @@ import { useState } from "react";
 import Modal from "./VerificationModal";
 import axios from "axios";
 import { BACKEND_BASE_URL } from "../../utils/Config";
+import {toast,Toaster} from "react-hot-toast";
 
 const Users = () => {
 
@@ -43,7 +44,9 @@ const Users = () => {
       axios
         .post(BACKEND_BASE_URL + `/api/block_user/${userId}/`)
         .then((response) => {
-          console.log(response.data);
+          console.log(response.data)
+          toast.error("User has been Blocked");
+          ;
   
           const updatedUsers = users.map((user) =>
             user.id === userId ? { ...user, isBlocked: true } : user
@@ -59,7 +62,8 @@ const Users = () => {
       axios
         .post(BACKEND_BASE_URL + `/api/unblock_user/${userId}/`)
         .then((response) => {
-          console.log(response.data);
+          console.log(response.data)
+          toast.success("User has been Unblocked");
   
           const updatedUsers = users.map((user) =>
             user.id === userId ? { ...user, isBlocked: false } : user
@@ -76,6 +80,7 @@ const Users = () => {
   
   return (
     <section className="container px-4 mx-auto mt-10">
+      <Toaster/>
     <div className="flex items-center gap-x-3">
       <h2 className="text-lg font-medium text-gray-800 dark:text-white">
         Total Users
@@ -133,65 +138,58 @@ const Users = () => {
               </thead>
 
               <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800">
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td className="py-3.5 px-4 text-sm font-medium text-gray-800 dark:text-white">
-                      {user.username}
-                    </td>
-                    <td className="px-12 py-3.5 text-sm font-medium text-green-600">
-                      {user.is_active ? "Active" : "Inactive"}
-                    </td>
-                    <td
-                      className="text-sm text-gray-800 dark:text-gray-400"
-                      onClick={() =>setSelectedUser(user) ||openUserModal(user.id)} 
-                    >
-                      <img
-                        className="w-40 h-32 cursor-pointer"
-                        src="https://media.istockphoto.com/id/612650934/vector/id-card-isolated-on-white-background-business-identification-icon.jpg?s=612x612&w=0&k=20&c=byimQb2_LJydS803qrpYKk-80dIC4HEp-BidObosij0="
-                        alt=""
-                      />
-                    </td>
-                      <td className="py-3.5 text-sm text-gray-800 dark:text-gray-400">
-                        {user.email}
-                      </td>
+            {users.map((user) => (
+              <tr key={user.id}>
+                <td className="py-3.5 px-4 text-sm font-medium text-gray-800 dark:text-white">
+                  {user.username}
+                </td>
+                <td className="px-12 py-3.5 text-sm font-medium text-green-600">
+                  {user.is_active ? "Active" : "Inactive"}
+                </td>
+                <td
+                  className="text-sm text-gray-800 dark:text-gray-400"
+                  onClick={() => setSelectedUser(user) || openUserModal(user.id)}
+                >
+                  {/* ... (your existing code) */}
+                </td>
+                <td className="py-3.5 text-sm text-gray-800 dark:text-gray-400">
+                  {user.email}
+                </td>
 
-                      <td className=" text-sm whitespace-nowrap  h-20 w-20">
-                      <div className="flex items-center gap-x-6">
-                {!user.is_active ? (
-                  <button
-                    onClick={() => handleUnblockUser(user.id)}
-                    className="px-2 py-1 text-sm font-medium text-green-600 bg-green-200 rounded-full hover:bg-green-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    Unblock
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleBlockUser(user.id)}
-                    className="px-2 py-1 text-sm font-medium text-red-600 bg-red-200 rounded-full hover:bg-red-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    Block
-                  </button>
+                <td className="text-sm whitespace-nowrap h-20 w-20">
+                  <div className="flex items-center gap-x-6">
+                    {user.is_active ? (
+                      <button
+                        onClick={() => handleBlockUser(user.id)}
+                        className="px-2 py-1 text-sm font-medium text-red-600 bg-red-200 rounded-full hover:bg-red-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
+                      >
+                        Block
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleUnblockUser(user.id)}
+                        className="px-2 py-1 text-sm font-medium text-green-600 bg-green-200 rounded-full hover:bg-green-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
+                      >
+                        Unblock
+                      </button>
+                    )}
+                  </div>
+                </td>
+                {activeUserId !== null && (
+                  <Modal
+                    showModal={true}
+                    onClose={closeUserModal}
+                    selectedUser={selectedUser.username}
+                    licenseFront={selectedUser.licenseFront}
+                    licenseBack={selectedUser.licenseBack}
+                    livePhoto={selectedUser.livePhoto}
+                    verify={() => handleVerification(selectedUser.id)}
+                    user={selectedUser}
+                  />
                 )}
-              </div>
-
-                      </td>
-                      {activeUserId !== null && (
-        <Modal
-        showModal={true} 
-        onClose={closeUserModal} 
-        selectedUser={selectedUser.username}
-        licenseFront={selectedUser.licenseFront}
-        licenseBack={selectedUser.licenseBack}
-        livePhoto={selectedUser.livePhoto}
-        verify={() => handleVerification(selectedUser.id)}
-        user={selectedUser} 
-      />
-      
-      )}
-                    </tr>
-                    
-                  ))}
-                </tbody>
+              </tr>
+            ))}
+          </tbody>
               </table>
             </div>
           </div>

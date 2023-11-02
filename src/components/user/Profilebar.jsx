@@ -37,7 +37,7 @@ const Profilebar = () => {
             <div className="w-24 h-24 rounded-full object-cover">
               <div className="w-full h-full">
                 <img
-                  src={BACKEND_BASE_URL + user.profile_img}
+                  src={user.profile_img}
                   alt="..."
                   className="w-24 h-24 rounded-full object-cover"
                   width="96"

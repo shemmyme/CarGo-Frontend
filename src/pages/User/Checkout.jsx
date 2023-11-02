@@ -39,6 +39,7 @@ const Checkout = () => {
   const decoded = jwtDecode(token)  
   const [Razorpay] = useRazorpay();
   const [couponCode, setCouponCode] = useState('');
+  const [discount, setDiscount] = useState(0);
 
 
   useEffect(() => {
@@ -71,8 +72,8 @@ const Checkout = () => {
 
   const currentDate = new Date().toISOString().split('T')[0];
 
-  const [startDate, setStartDate] = useState(currentDate);
-  const [endDate, setEndDate] = useState(startDate);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
 
 
   
@@ -108,12 +109,7 @@ const Checkout = () => {
   };
 
   const handleCheckout = async () => {
-    // Check if the ending date is greater than or equal to the starting date
-    if (new Date(endDate) < new Date(startDate)) {
-      toast.error('Ending date must be equal to or later than the starting date');
-      return;
-    }
-
+    
     calculateDropOffTime();
     try {
       const response = await axios.post(
@@ -183,7 +179,24 @@ const Checkout = () => {
     });
 };
   const razorpayPayment = (payment_id,order_id,signature) => {
-  
+    if (new Date(endDate) < new Date(startDate)) {
+      toast.error('Ending date must be equal to or later than the starting date');
+      return;
+    }
+
+    if(!startDate){
+      toast.error('Please select the starting date to continue.')
+      return;
+    }
+    if(!endDate ){
+      toast.error("Please select ending date to continue.")
+    }
+
+    if (!startTime) {
+      toast.error('Please select a start time to continue.');
+      return;
+    }
+
     axios
     .post(BACKEND_BASE_URL + `/rentals/order/create/${decoded.user_id}/`, {
       // "payment_id": payment_id,
@@ -246,27 +259,28 @@ const Checkout = () => {
       console.log(error);
     });
 };
+
 const applyCoupon = () => {
-  axios.get(BACKEND_BASE_URL+ `/admin/validate-coupon/?code=${couponCode}`)
+  axios.get(BACKEND_BASE_URL + `/admin/validate-coupon/${couponCode}`)
     .then((response) => {
       if (response.status === 200) {
         const discountPercentage = response.data.discount_perc;
-        const discountedAmount = grandTotal * (1 - discountPercentage / 100);
+        const discountedAmount = Math.round(grandTotal * (1 - discountPercentage / 100));
+
+        setDiscount(grandTotal - discountedAmount);
         setGrandTotal(discountedAmount);
         toast.success('Coupon applied successfully');
-      } 
+      } else {
+        const errorMessage = response.data.error || 'Error applying coupon';
+        toast.error(errorMessage);
+      }
     })
     .catch((error) => {
-      if (error.response.status === 404) {
-        toast.error('Coupon code not found');
-      } else if (error.response.status === 400) {
-        toast.error('Invalid coupon code');
-      } else {
-        console.error('Error applying coupon:', error);
-        toast.error('Error applying coupon');
-      }
+      const errorMessage = error.response?.data?.error || 'Error applying coupon';
+      toast.error(errorMessage);
     });
 };
+
 
 
   return (
@@ -394,6 +408,14 @@ const applyCoupon = () => {
                     <span className="text-pistachio">₹450</span>
                   </div>
                 </div>
+                <div className="flex justify-between text-sm font-medium my-2">
+      <div className="flex items-center">
+        <span>Discount</span>
+      </div>
+      <div>
+        <span className="text-pistachio">- ₹{discount}</span> {/* Display the discount */}
+      </div>
+    </div>
                 <div className="border-b mt-2"></div>
                 <div className="flex justify-between text-sm font-medium my-2">
                   <div className="flex items-center">
