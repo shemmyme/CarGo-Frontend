@@ -120,7 +120,7 @@ const Users = () => {
                     scope="col"
                     className="py-3.5  text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                   >
-                    ID
+                    Verification
                   </th>
                   <th
                     scope="col"
@@ -150,7 +150,7 @@ const Users = () => {
                   className="text-sm text-gray-800 dark:text-gray-400"
                   onClick={() => setSelectedUser(user) || openUserModal(user.id)}
                 >
-                  {/* ... (your existing code) */}
+                  <img src={user.livePhoto} className="w-20"/>
                 </td>
                 <td className="py-3.5 text-sm text-gray-800 dark:text-gray-400">
                   {user.email}

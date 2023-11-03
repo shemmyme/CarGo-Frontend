@@ -105,7 +105,7 @@ const Coupon = () => {
                       className="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                     >
                       <div className="flex items-center gap-x-3">
-                        <span>Status</span>
+                        <span>Uses Left</span>
                       </div>
                     </th>
                     <th
@@ -140,7 +140,7 @@ const Coupon = () => {
                           {coupon.coupon_code}
                         </td>
                         <td className="px-12 py-3.5 text-sm font-medium text-green-600">
-                          {coupon.active}
+                          {coupon.uses_remaining}
                         </td>
                         <td className="  text-sm text-gray-800 dark:text-gray-400">
                           <img
