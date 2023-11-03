@@ -7,8 +7,7 @@ import { ReviewModal } from "./ReviewModal";
 import { toast, Toaster } from "react-hot-toast";
 import { BACKEND_BASE_URL } from "../../utils/Config";
 import axios from "axios";
-import StarRate from './StarRate';
-
+import StarRate from "./StarRate";
 
 const Booking = () => {
   const nav = useNavigate();
@@ -256,9 +255,17 @@ const Booking = () => {
                               booking.booking_status === "Returned" ? (
                                 reviews.length > 0 ? (
                                   <div>
-                                    <p>{reviews[0].comment}</p>
-                                    <StarRate rating={reviews[0].rating} size="text-2xl"
-                                    />
+                                    {reviews.map((review) =>
+                                      review.booking === booking.id ? (
+                                        <div key={review.id}>
+                                          <p>{review.comment}</p>
+                                          <StarRate
+                                            rating={review.rating}
+                                            size="text-2xl"
+                                          />
+                                        </div>
+                                      ) : null
+                                    )}
                                   </div>
                                 ) : (
                                   <button

@@ -44,9 +44,9 @@ const ReviewList = () => {
         Testimonials
       </h3>
       <p className="mb-6 pb-2 md:mb-12 md:pb-0">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fugit, error
-        amet numquam iure provident voluptate esse quasi, veritatis totam
-        voluptas nostrum quisquam eum porro a pariatur veniam.
+      testimonial is an honest endorsement of the product 
+      that usually comes from a customer peer who has benefited
+       from or experienced success as a result of the work we did for them.
       </p>
     </div>
     <div className="grid gap-6 text-center md:grid-cols-3 lg:gap-12">
@@ -56,30 +56,22 @@ const ReviewList = () => {
         <div className="mb-6 flex justify-center">
           <img
             src={review.user.profile_img}
-            className="w-32 rounded-full shadow-lg dark:shadow-black/30"
+            className="w-28 rounded-full shadow-lg dark:shadow-black/30"
             alt="Lisa Cudrow"
           />
         </div>
-        <h5 className="mb-4 text-xl font-semibold">{review.user.username}</h5>
-    
-        <p className="mb-4">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            className="inline-block h-7 w-7 pr-2"
-            viewBox="0 0 24 24"
-          >
-            <path
-              d="M13 14.725c0-5.141 3.892-10.519 10-11.725l.984 2.126c-2.215.835-4.163 3.742-4.38 5.746 2.491.392 4.396 2.547 4.396 5.149 0 3.182-2.584 4.979-5.199 4.979-3.015 0-5.801-2.305-5.801-6.275zm-13 0c0-5.141 3.892-10.519 10-11.725l.984 2.126c-2.215.835-4.163 3.742-4.38 5.746 2.491.392 4.396 2.547 4.396 5.149 0 3.182-2.584 4.979-5.199 4.979-3.015 0-5.801-2.305-5.801-6.275z"
-            />
-          </svg>
-{review.comment}
-        </p>
-        <ul className="mb-0 flex items-center justify-center">
-          <li>
-           <StarRate rating={review.rating} size="text-3xl"/>
-          </li>
-        </ul>
+        <h5 className="text-lg font-semibold text-blue-500">{review.user.username}</h5>
+
+  <p className="text-gray-700 text-sm mt-2">
+    {review.comment}
+  </p>
+  <p className="text-gray-500 text-xs mt-2">
+    Car: {review.car.product_name}
+  </p>
+
+  <div className="mt-4">
+    <StarRate rating={review.rating} size="text-2xl" />
+  </div>
       </div>
 ))}   
     </div>

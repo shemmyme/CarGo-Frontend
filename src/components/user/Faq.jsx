@@ -6,7 +6,7 @@ const Faq = () => {
   const dummyFaqs = [
     {
       question: "How can I book a car?",
-      answer: "To book a car, simply sign up or log in to your account, select your desired vehicle, choose your rental dates, and complete the reservation process.",
+      answer: "To book a car, simply sign up or log in to your account,upload the license anda live photo to confirm its you, get verified,  select your desired vehicle, choose your rental dates, and complete the reservation process.",
     },
     {
       question: "What documents do I need to rent a car",
