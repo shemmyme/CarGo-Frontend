@@ -250,36 +250,41 @@ const Booking = () => {
                             </div>
                           </td>
                           <td className="text-sm whitespace-nowrap h-20 w-20">
-                            <div className="flex items-center justify-center gap-x-6">
-                              {booking.booking_status === "Rented" ||
-                              booking.booking_status === "Returned" ? (
-                                reviews.length > 0 ? (
-                                  <div>
-                                    {reviews.map((review) =>
-                                      review.booking === booking.id ? (
-                                        <div key={review.id}>
-                                          <p>{review.comment}</p>
-                                          <StarRate
-                                            rating={review.rating}
-                                            size="text-2xl"
-                                          />
-                                        </div>
-                                      ) : null
-                                    )}
-                                  </div>
-                                ) : (
-                                  <button
-                                    className="px-2 py-1 text-sm font-medium text-white bg-green-200 rounded-full hover:bg-blue-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
-                                    onClick={() => handleReview(booking.id)}
-                                  >
-                                    Add
-                                  </button>
-                                )
-                              ) : (
-                                <p>You can't make a review about this car</p>
-                              )}
-                            </div>
-                          </td>
+  <div className="flex items-center justify-center gap-x-6">
+    {booking.booking_status === "Rented" || booking.booking_status === "Returned" ? (
+      reviews.length > 0 ? (
+        <div>
+          {reviews.map((review) =>
+            review.booking === booking.id ? (
+              <div key={review.id}>
+                <p>{review.comment}</p>
+                <StarRate rating={review.rating} size="text-2xl" />
+              </div>
+            ) : null
+          )}
+          {reviews.some((review) => review.booking === booking.id) ? null : (
+            <button
+              className="px-2 py-1 text-sm font-medium text-white bg-green-200 rounded-full hover:bg-blue-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
+              onClick={() => handleReview(booking.id)}
+            >
+              Add
+            </button>
+          )}
+        </div>
+      ) : (
+        <button
+          className="px-2 py-1 text-sm font-medium text-white bg-green-200 rounded-full hover:bg-blue-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
+          onClick={() => handleReview(booking.id)}
+        >
+          Add
+        </button>
+      )
+    ) : (
+      <p>You can't make a review about this car</p>
+    )}
+  </div>
+</td>
+
                           <td className="text-sm whitespace-nowrap h-20 w-20">
                             <div className="flex items-center justify-center gap-x-6">
                               {booking.booking_status == "Pending" ? (
