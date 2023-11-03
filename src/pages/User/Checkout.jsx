@@ -306,7 +306,7 @@ const applyCoupon = () => {
           <div className="w-40 h-28">
             <div className="w-full h-full">
               <img
-                src={BACKEND_BASE_URL+car.image_1}
+                src={car.image_1}
                 alt="..."
                 className="w-40 h-28"
                 width="160"
