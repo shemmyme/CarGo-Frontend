@@ -12,7 +12,7 @@ function AddCoupons() {
     start_date: "",
     description: "",
     image_1: [],
-    max_use : '',
+    // max_use : '',
     uses_remaining:''
   };
 
@@ -182,7 +182,7 @@ function AddCoupons() {
               />
             </div>
 
-            <div className="sm:col-span-4">
+            {/* <div className="sm:col-span-4">
               <label className="form-label" htmlFor="max_uses">
                 Max usage<br />
               </label>
@@ -200,7 +200,7 @@ function AddCoupons() {
                 id="max_uses"
                 className="form-control"
               />
-            </div>
+            </div> */}
 
             <div className="sm:col-span-3">
               <label className="form-label" htmlFor="image_1">

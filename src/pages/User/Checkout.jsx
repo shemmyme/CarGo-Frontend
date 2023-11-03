@@ -261,7 +261,11 @@ const Checkout = () => {
 };
 
 const applyCoupon = () => {
-  axios.get(BACKEND_BASE_URL + `/admin/validate-coupon/${couponCode}`)
+  axios.get(BACKEND_BASE_URL + `/admin/validate-coupon/${couponCode}/`, {
+    params: {
+      user_id: decoded.user_id,
+    }
+  })
     .then((response) => {
       if (response.status === 200) {
         const discountPercentage = response.data.discount_perc;
