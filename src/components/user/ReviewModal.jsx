@@ -13,7 +13,7 @@ import StarRate from "./StarRate";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-export function ReviewModal({ open, bookingId, handler }) {
+export function ReviewModal({ open, bookingId, handler,user }) {
 
   const [review,setReview] = useState('')
   const handleOpen = () => setOpen(!open);
@@ -23,12 +23,12 @@ export function ReviewModal({ open, bookingId, handler }) {
   const nav = useNavigate();
 
   useEffect(() => {
-    fetch(BACKEND_BASE_URL + `/rentals/profile/bookings/${bookingId}`)
+    fetch(BACKEND_BASE_URL + `/rentals/profile/bookings/${user}`)
       .then((response) => response.json())
       .then((data) => {
         setBookings(data);
       });
-  }, [bookingId]);
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,6 +61,8 @@ export function ReviewModal({ open, bookingId, handler }) {
     cancelBooking(bookingId);
     handler();
   };
+
+  
   return (
     <>
       <Dialog

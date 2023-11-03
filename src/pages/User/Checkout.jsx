@@ -12,6 +12,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { BACKEND_BASE_URL } from "../../utils/Config";
 import Paypal from "./Paypal";
 import useRazorpay from 'react-razorpay';
+import Spinner from './Spinner';
+
 
 
 const Checkout = () => {
@@ -153,7 +155,15 @@ const Checkout = () => {
 
   
   if (!car) {
-    return <div>Loading...</div>; 
+    return <div className="h-screen flex items-center justify-center">
+    <Spinner color="text-primary" />
+    <Spinner color="text-secondary" />
+    <Spinner color="text-success" />
+    <Spinner color="text-danger" />
+    <Spinner color="text-warning" />
+    <Spinner color="text-info" />
+    <Spinner color="text-neutral-100" />
+  </div> 
   }
 
   const complete_payment = (payment_id,order_id,signature) => {

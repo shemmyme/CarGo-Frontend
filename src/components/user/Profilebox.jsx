@@ -192,8 +192,8 @@ const Profilebox = () => {
         <label htmlFor="license-front" className="relative cursor-pointer rounded-md">
           <img
             className="h-64 w-full lg:ml-10 rounded overflow-hidden shadow-lg"
-            src={user.licenseFront ? `${BACKEND_BASE_URL}${user.licenseFront}` : ''}
-            alt="License Front"
+            src={user.licenseFront ? `${user.licenseFront}` : ''}
+            alt=""
           />
           <input
             id="license-front"
@@ -210,8 +210,8 @@ const Profilebox = () => {
         <label htmlFor="license-back" className="relative cursor-pointer rounded-md">
           <img
             className="h-64 w-full lg:ml-10 rounded overflow-hidden shadow-lg"
-            src={user.licenseBack ? `${BACKEND_BASE_URL}${user.licenseBack}` : ''}
-            alt="License Back"
+            src={user.licenseBack ? `${user.licenseBack}` : ''}
+            alt=""
           />
           <input
             id="license-back"
@@ -232,8 +232,8 @@ const Profilebox = () => {
                 user.livePhoto ? 
                 <img
                 className="h-56 rounded-lg ml-10"
-                src={BACKEND_BASE_URL +`${user.livePhoto}`}
-                alt="Hello"
+                src={user.livePhoto}
+                alt=""
               />
                 :
                 <LiveCam />
