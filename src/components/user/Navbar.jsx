@@ -4,6 +4,7 @@ import LoginIcon from "@mui/icons-material/Login";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Typography } from "@mui/material";
 import { getLocal } from "../../helpers/Auth";
+import logo from '../../../public/CargoLogo.png'
 
 function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,13 +20,12 @@ function Navigation() {
     <nav className="relative bg-white shadow dark:bg-gray-800">
       {/* <nav className={`relative bg-white shadow dark:bg-gray-800 ${window.location.pathname === '/' ? 'sticky top-0 z-50' : ''}`}></nav> */}
       <div className="container px-6 py-4 mx-auto md:flex md:justify-between md:items-center">
-        <Typography
-          as="a"
+        <img
+          src={logo}     
           variant="h5"
-          className="mr-4 cursor-pointer py-1.5 text-2xl font-bold text-white-800"
-        >
-          CarGo
-        </Typography>
+          className="mr-4 cursor-pointer py-1.5 text-2xl font-bold text-white-800 w-24 "
+        />
+       
         <div
           className={`absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center ${
             isOpen ? "translate-x-0 opacity-100" : "opacity-0 -translate-x-full"

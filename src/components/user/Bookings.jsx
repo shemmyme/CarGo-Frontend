@@ -23,10 +23,10 @@ const Booking = () => {
   const [reviews, setReviews] = useState([]);
   const [reviewsAdded, setReviewsAdded] = useState(false);
 
-  const fetchReviews = async (bookingId,userId) => {
+  const fetchReviews = async () => {
     try {
       const response = await axios.get(
-        BACKEND_BASE_URL + `/rentals/reviews_user/list/${userId}/${bookingId}/`
+        BACKEND_BASE_URL + `/rentals/reviews_user/list/${decoded.user_id}/`
       );
       setReviews(response.data);
       console.log(response.data, "hello reviews");
@@ -36,7 +36,7 @@ const Booking = () => {
   };
 
   useEffect(() => {
-    fetchReviews(decoded.user_id,decoded.user_id);
+    fetchReviews();
   }, [decoded.user_id]);
 
   useEffect(() => {
