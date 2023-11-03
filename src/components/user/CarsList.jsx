@@ -141,8 +141,8 @@ function CarsList() {
         ) : (
           carsToDisplay.map((car) => (
             <div key={car.id} className="m-6 lg:px-32 mt-10">
-              <a
-                href=""
+              <button
+                onClick={() => navigate(`/cars/${car.id}`)}
                 className="lg:flex   items-center bg-white border border-gray-200 rounded-lg shadow w-full h-64 hover:bg-gray-100"
               >
                 <img
@@ -155,11 +155,11 @@ function CarsList() {
                     {car.product_name}
                   </h5>
 
-                  <div>
+                  {/* <div>
                     <button className="py-3 w-20 px-3 text-sm font-semibold font-sans focus:outline-none leading-none text-green-700 bg-green-100 rounded">
                       Available
                     </button>
-                  </div>
+                  </div> */}
 
                   <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 mt-3">
                     {car.description}
@@ -173,7 +173,7 @@ function CarsList() {
                     Book now
                   </button>
                 </div>
-              </a>
+              </button>
             </div>
           ))
         )}
