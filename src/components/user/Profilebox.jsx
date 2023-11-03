@@ -5,6 +5,7 @@ import LiveCam from "./LiveCam";
 import jwtDecode from "jwt-decode";
 import { BACKEND_BASE_URL } from "../../utils/Config";
 import {toast,Toaster} from "react-hot-toast";
+import avatar from '../../../public/OIP.jpeg'
 
 const Profilebox = () => {
   const token = localStorage.getItem("authToken");
@@ -123,7 +124,7 @@ const Profilebox = () => {
         {selectedProfilePhoto ?(
           <img
           src={user.profile_img}
-          alt=""
+          alt={avatar}
           className="w-24 h-24 rounded-full object-cover cursor-pointer"
         />
         ):''}
