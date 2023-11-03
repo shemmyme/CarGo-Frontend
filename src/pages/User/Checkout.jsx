@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { BACKEND_BASE_URL } from "../../utils/Config";
 import Paypal from "./Paypal";
 import useRazorpay from 'react-razorpay';
-import Spinner from './Spinner';
+import Spinner from '../../components/user/Spinner';
 
 
 
