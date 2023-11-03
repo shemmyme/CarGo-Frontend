@@ -19,16 +19,25 @@ export function ReviewModal({ open, bookingId, handler,user }) {
   const handleOpen = () => setOpen(!open);
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState(0);
-  const [bookings, setBookings] = useState([]);
+  const [bookings, setBookings] = useState({});
   const nav = useNavigate();
 
+  // useEffect(() => {
+  //   fetch(BACKEND_BASE_URL + `/rentals/profile/bookings/${user}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setBookings(data);
+  //     });
+  // }, [user]);
+
   useEffect(() => {
-    fetch(BACKEND_BASE_URL + `/rentals/profile/bookings/${user}`)
+    
+    fetch(BACKEND_BASE_URL + `/rentals/profile/bookings/${bookingId}`)
       .then((response) => response.json())
       .then((data) => {
         setBookings(data);
       });
-  }, [user]);
+  }, [bookingId]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

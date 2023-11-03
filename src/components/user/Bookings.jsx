@@ -26,10 +26,9 @@ const Booking = () => {
   const fetchReviews = async () => {
     try {
       const response = await axios.get(
-        BACKEND_BASE_URL + `/rentals/reviews/list/${user}`
+        BACKEND_BASE_URL + `/rentals/reviews_user/list/${decoded.user_id}/`
       );
       setReviews(response.data);
-      setReviewsAdded(true)
       console.log(response.data, "hello reviews");
     } catch (error) {
       console.error("Error getting reviews list", error);
@@ -38,7 +37,7 @@ const Booking = () => {
 
   useEffect(() => {
     fetchReviews();
-  }, [user]);
+  }, [decoded.user_id]);
 
   useEffect(() => {
     fetch(BACKEND_BASE_URL + `/api/profile/${decoded.user_id}/`)
@@ -137,7 +136,6 @@ const Booking = () => {
   function handleReview(bookingId) {
     setBooking(true);
     setBookingId(bookingId);
-    setReviewsAdded(true);
   }
 
   return (
@@ -258,9 +256,10 @@ const Booking = () => {
                               booking.booking_status === "Returned" ? (
                                 reviews.length > 0 ? (
                                   <div>
-                                  <p>{reviews[0].comment}</p>
-                                  <StarRate rating={reviews[0].rating} size="text-2xl" /> 
-                                </div>
+                                    <p>{reviews[0].comment}</p>
+                                    <StarRate rating={reviews[0].rating} size="text-2xl"
+                                    />
+                                  </div>
                                 ) : (
                                   <button
                                     className="px-2 py-1 text-sm font-medium text-white bg-green-200 rounded-full hover:bg-blue-300 hover:text-white transition duration-300 ease-in-out transform hover:scale-105"
