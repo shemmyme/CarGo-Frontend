@@ -11,6 +11,7 @@
     }
     export function UsersProvider({children}){
         const [users,setUsers] = useState([])
+        
         useEffect(()=>{
             const fetchData = async()=>{
                 try{

@@ -1,6 +1,7 @@
 import { createContext, useContext,useState,useEffect  } from "react";
 import axios from 'axios'
 import { BACKEND_BASE_URL } from "../../utils/Config";
+import {toast,Toaster} from "react-hot-toast";
 
 const CarsContext = createContext()
 
@@ -47,9 +48,9 @@ export function CarsProvider({children}){
 
       if (response.status === 204) {
         setCars((prevCars) => prevCars.filter((car) => car.id !== carId));
-        alert("Car deleted successfully");
+        toast.success("Car deleted successfully");
       } else {
-        console.error("Failed to delete car.");
+        toast.error("Failed to delete car.");
       }
     } catch (error) {
       console.error("Error deleting car:", error);
@@ -58,6 +59,7 @@ export function CarsProvider({children}){
 
   return(
     <div>
+      <Toaster/>
         <CarsContext.Provider value={{cars , deleteCar }}>
             {children}
         </CarsContext.Provider>

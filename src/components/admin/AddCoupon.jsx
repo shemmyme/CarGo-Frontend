@@ -46,10 +46,11 @@ function AddCoupons() {
         setCoupon(initialCoupon);
       }else if (response.status == 208){
         toast.error('Coupon with the same Code exists')
-      } else {
-        alert("Failed to add coupon.");
+      } else if (response.status == 400){
+        toast.error("Failed to add coupon.");
       }
     } catch (error) {
+      toast.error("Complete all the fields")
       console.log(error, "errrrrrrrrrrrrrrrrrrrrrrrrorrrrrrrrrrrrrr");
     }
   };

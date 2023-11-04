@@ -11,6 +11,9 @@ const Users = () => {
   const users = useUserContext();
   const [activeUserId, setActiveUserId] = useState(null);
   const [user,setUser] = useState([])
+  const[activeness,setActiveness] = useState()
+
+  
 
   const openUserModal = (userId) => {
     setActiveUserId(userId);
@@ -29,16 +32,18 @@ const Users = () => {
           BACKEND_BASE_URL + `/api/verify/${userId}/`) 
 
         if (response.status ===200) {
-          alert("User has been verified.");
+          toast.success("User has been verified.");
           closeUserModal()
           
         } else {
-          alert("Failed to verify user.");
+          toast.error("Failed to verify user.");
         }
       } catch (error) {
         console.error("Error verifying user:", error);
       }
     };
+
+    
 
     const handleBlockUser = (userId) => {
       axios

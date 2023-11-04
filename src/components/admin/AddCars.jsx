@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { BACKEND_BASE_URL } from "../../utils/Config";
 import {Cloudinary} from "@cloudinary/url-gen";
+import {toast,Toaster} from "react-hot-toast";
+
 
 
 function AddCars() {
@@ -45,19 +47,24 @@ function AddCars() {
       );
 
       if (response.status === 201) {
-        alert("Car added successfully!");
-        navigate("/admin/listcar/");
+        toast.success("Succesfully added a new car")
+        setTimeout(()=>{
+          navigate("/admin/listcar/");
+        },1500)
         setProduct(initialProduct);
       } else {
-        alert("Failed to add car.");
+        toast.error("Failed to add car.");
       }
     } catch (error) {
+      toast.error("Complete all the fields")
+
       console.log(error, "errrrrrrrrrrrrrrrrrrrrrrrrorrrrrrrrrrrrrr");
     }
   };
 
   return (
     <div className="p-32 flex justify-center w-full">
+      <Toaster/>
       <form>
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">

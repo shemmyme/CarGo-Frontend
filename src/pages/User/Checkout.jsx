@@ -181,7 +181,7 @@ const Checkout = () => {
       if (response.status === 201) {
         handleCheckout();
       } else if (response.status === 400) {
-        alert('Slot not available');
+        toast.error('Slot not available');
       }
     })
     .catch((error) => {
@@ -252,7 +252,7 @@ const Checkout = () => {
         const rzp1 = new Razorpay(options);
 
         rzp1.on('payment.failed', function (response) {
-          alert(response.error.code);
+          toast.error(response.error.code);
           // alert(response.error.description);
           // alert(response.error.source);
           // alert(response.error.step);
