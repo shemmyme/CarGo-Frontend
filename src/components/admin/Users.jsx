@@ -49,12 +49,11 @@ const Users = () => {
       axios
         .post(BACKEND_BASE_URL + `/api/block_user/${userId}/`)
         .then((response) => {
-          console.log(response.data)
+          console.log(response.data);
           toast.error("User has been Blocked");
-          ;
-  
+    
           const updatedUsers = users.map((user) =>
-            user.id === userId ? { ...user, isBlocked: true } : user
+            user.id === userId ? { ...user, is_active: false } : user
           );
           setUser(updatedUsers);
         })
@@ -62,16 +61,16 @@ const Users = () => {
           console.error("Error blocking the user:", error);
         });
     };
-  
+    
     const handleUnblockUser = (userId) => {
       axios
         .post(BACKEND_BASE_URL + `/api/unblock_user/${userId}/`)
         .then((response) => {
-          console.log(response.data)
+          console.log(response.data);
           toast.success("User has been Unblocked");
-  
+    
           const updatedUsers = users.map((user) =>
-            user.id === userId ? { ...user, isBlocked: false } : user
+            user.id === userId ? { ...user, is_active: true } : user
           );
           setUser(updatedUsers);
         })
@@ -79,6 +78,8 @@ const Users = () => {
           console.error("Error unblocking the user:", error);
         });
     };
+    
+    
     
     
 
